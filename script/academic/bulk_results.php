@@ -135,8 +135,6 @@ if (isset($_SESSION['bulk_result'])) {
                                         <th>AVERAGE</th>
                                         <th>GRADE</th>
                                         <th>REMARKS</th>
-                                        <!-- <th>DIVISION</th> -->
-                                        <!-- <th>POINTS</th> -->
                                         <th></th>
                                     </tr>
                                 </thead>

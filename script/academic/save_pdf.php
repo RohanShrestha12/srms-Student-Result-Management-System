@@ -7,273 +7,170 @@ require_once('const/check_session.php');
 require_once('tcpdf/tcpdf.php');
 require_once('const/calculations.php');
 
-if ($res == "1" && $level == "1" && isset($_GET['term'])) {}else{header("location:../");}
+if ($res == "1" && $level == "1" && isset($_GET['term'])) {} else { header("location:../"); }
 
 $term = $_GET['term'];
 $std = $_GET['std'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = new PDO('mysql:host=' . DBHost . ';dbname=' . DBName . ';charset=' . DBCharset, DBUser, DBPass);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$stmt = $conn->prepare("SELECT * FROM tbl_students WHERE id = ?");
-$stmt->execute([$std]);
-$result = $stmt->fetchAll();
+    $stmt = $conn->prepare("SELECT * FROM tbl_students WHERE id = ?");
+    $stmt->execute([$std]);
+    $result = $stmt->fetchAll();
 
-foreach ($result as $key => $value) {
-$fname = $value[1];
-$mname = $value[2];
-$lname = $value[3];
-$gender = $value[4];
-$img = $value[9];
+    foreach ($result as $value) {
+        $dob_bs = $value[5] ?? '';
+        $symbol_no = $value[6] ?? '';
+    }
+
+    $stmt = $conn->prepare("SELECT * FROM tbl_terms WHERE id = ?");
+    $stmt->execute([$term]);
+    $result = $stmt->fetchAll();
+
+    if (count($result) < 1) {
+        header("location:./");
+    }
+
+    $title = $result[0][1] . ' Examination Result';
+    $exam_year = date('Y');
+
+    $stmt = $conn->prepare("SELECT * FROM tbl_exam_results LEFT JOIN tbl_classes ON tbl_exam_results.class = tbl_classes.id WHERE tbl_exam_results.term = ? AND tbl_exam_results.student = ?");
+    $stmt->execute([$term, $std]);
+    $result2 = $stmt->fetchAll();
+
+    if (count($result2) < 1) {
+        header("location:./");
+    }
+} catch (PDOException $e) {
+    ob_end_clean();
+    die("Connection failed: " . $e->getMessage());
 }
 
-$stmt = $conn->prepare("SELECT * FROM tbl_grade_system");
-$stmt->execute();
-$grading = $stmt->fetchAll();
-
-$stmt = $conn->prepare("SELECT * FROM tbl_terms WHERE id = ?");
-$stmt->execute([$term]);
-$result = $stmt->fetchAll();
-
-if (count($result) < 1) { header("location:./"); }
-
-$title = $result[0][1].' Examination Report Card';
-
-$stmt = $conn->prepare("SELECT * FROM tbl_exam_results
-LEFT JOIN tbl_classes ON tbl_exam_results.class = tbl_classes.id
-WHERE tbl_exam_results.term = ? AND tbl_exam_results.student = ?");
-$stmt->execute([$term, $std]);
-$result2 = $stmt->fetchAll();
-
-if (count($result2) < 1) { header("location:./"); }
-
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-$pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor(WBName);
-$pdf->SetTitle($title);
-$pdf->SetSubject($title);
-$pdf->SetKeywords('SRMS',WBName);
-
-$pdf->setPrintHeader(false);
-$pdf->setPrintFooter(false);
-
-$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
+$pdf = new TCPDF('P', 'mm', array(210, 297), true, 'UTF-8', false);
+$pdf->SetMargins(19.3, 5.08, 22.35);
+$pdf->SetAutoPageBreak(TRUE, 5.84);
+$pdf->SetCellHeightRatio(1.5);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-require_once(dirname(__FILE__).'/lang/eng.php');
-$pdf->setLanguageArray($l);
-}
-
 $pdf->setFontSubsetting(true);
-$pdf->SetFont('helvetica', '', 14, '', true);
+$pdf->SetFont('helvetica', '', 11, '', true);
 
 $pdf->AddPage();
-$pdf->setTextShadow(array('enabled'=>true, 'depth_w'=>0.2, 'depth_h'=>0.2, 'color'=>array(196,196,196), 'opacity'=>1, 'blend_mode'=>'Normal'));
-if ($img == "DEFAULT") {
-$th_img = '<img  width="90" height="90"  src="images/students/'.$gender.'.png">';
-}else{
-$th_img = '<img width="90" height="90" src="images/students/'.$img.'">';
-}
 
-$html = '<table width="100%">
+ob_start();
+
+// Registration No.
+$html = '<div style="text-align:right; font-family:calibri; font-size:11px; font-weight:bold; width:170.43mm; padding-right:50px; margin-bottom:6px;">
+<u>REGISTRATION NO.: ' . $std . '</u> <br> <br> <br> <br>
+</div>';
+$pdf->writeHTMLCell(170.43, 0, '', '', $html, 0, 1, 0, true, 'C', true);
+$pdf->Ln(3);
+
+// Grade Sheet Header
+$html = '
+<div style="font-size:11px; font-weight:bold; font-family:helvetica; text-align:left; width:0cm;">
+  THE FOLLOWING ARE THE GRADE(S) SECURED BY: ' . $value[1] . '
+  <div style="border-bottom:1px solid black; width:-1cm; margin-top:2px;"></div>
+  <br>
+  DATE OF BIRTH: ' . $dob_bs . ' B.S. SYMBOL NO.: ' . $symbol_no . ' GRADE XI IN THE <br>
+  ANNUAL EXAMINATION CONDUCTED IN ' . $exam_year . ' A.D. ARE GIVEN BELOW.
+</div>';
+
+
+
+$pdf->writeHTMLCell(170.43, 0, '', '', $html, 0, 1, 0, true, 'L', true);
+$pdf->Ln(2);
+
+// Table Header
+$html = '<table border="1" cellpadding="1.02" cellspacing="0" style="font-size:10px; border-collapse:collapse;" width="170.43mm">
 <tr>
-<td width="15%"><img src="images/logo/'.WBLogo.'"></td>
-<td width="70%" style="text-align:center;">
-<h5><b style="font-size:18px;">'.WBName.'</b>
-<br>Student Examination Report Card<br>
-'.$result[0][1].'<br>
-'.$result2[0][7].'</h5>
-</td>
-<td width="15%">'.$th_img.'</td>
-</tr>
-</table>';
-
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-
-$pdf->cell(0, 0, '', 0, 1, 'C');
-$html = '<b style="font-size:10pt;">Student Profile</b>';
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-$html = '<table  cellpadding="3" style="margin-bottom:10px;  font-size: 10px; border-collapse: collapse;" width="100%">
-<tr>
-<td width="20%"><b>REGISTRATION NUMBER</b></td>
-<td width="80%">'.$std.'</td>
-</tr>
-<tr>
-<td><b>STUDENT NAME</b></td>
-<td colspan="5">'.$fname.' '.$mname.' '.$lname.'</td>
-</tr>
-<tr>
-<td><b>EXAMINATION TERM</b></td>
-<td colspan="5">'.$result[0][1].'</td>
-</tr>
-<tr>
-<td><b>EXAMINATION CLASS</b></td>
-<td colspan="5">'.$result2[0][7].'</td>
-</tr>
-</table>';
-
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-
-$pdf->cell(0, 0, '', 0, 1, 'C');
-
-$html = '<b style="font-size:10pt;">Examination Results</b>';
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-
-$htmls = '<table cellpadding="3" border="1" style="margin-bottom:10px;  font-size: 10px; border-collapse: collapse;" width="100%" >
-<tr>
-<th width="5%"><b>#</b></th>
-<th width="35%"><b>SUBJECT</b></th>
-<th width="20%"><b>SCORE</b></th>
-<th width="20%"><b>GRADE</b></th>
-<th width="20%"><b>REMARK</b></th>
+<th width="17.53mm" style="text-align:center; font-weight:bold; vertical-align:middle;">SUBJECT CODE</th>
+<th width="68.07mm" style="text-align:left; font-weight:bold; vertical-align:middle;">SUBJECTS</th>
+<th width="17.02mm" style="text-align:center; font-weight:bold; vertical-align:middle;">CREDIT HOURS</th>
+<th width="11.82mm" style="text-align:center; font-weight:bold; vertical-align:middle;">IN</th>
+<th width="11.82mm" style="text-align:center; font-weight:bold; vertical-align:middle;">TH</th>
+<th width="11.82mm" style="text-align:center; font-weight:bold; vertical-align:middle;">GRADE</th>
+<th width="11.82mm" style="text-align:center; font-weight:bold; vertical-align:middle;">FINAL GRADE</th>
+<th width="11.82mm" style="text-align:center; font-weight:bold; vertical-align:middle;">REMARKS</th>
 </tr>';
 
 $stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations LEFT JOIN tbl_subjects ON tbl_subject_combinations.subject = tbl_subjects.id");
 $stmt->execute();
 $result = $stmt->fetchAll();
-$n = 1;
-$tscore = 0;
-$t_subjects = 0;
-$subssss = array();
 
-foreach ($result as $key => $row) {
-$class_list = unserialize($row[1]);
+foreach ($result as $row) {
+    $class_list = unserialize($row[1]);
 
-if (in_array($result2[0][6], $class_list))
-{
-$t_subjects++;
-$score = 0;
-$grd = "N/A";
-$rm = "N/A";
+    if (in_array($result2[0][6], $class_list)) {
+        $subject_code = $row[0];
+        $subject_name = $row[6];
+        $credit_hour = 3;
+        $internal_marks = 0;
+        $theory_marks = 0;
+        $grade = "N/A";
+        $final_grade = "N/A";
+        $remark = "N/A";
 
-$stmt = $conn->prepare("SELECT * FROM tbl_exam_results WHERE class = ? AND subject_combination = ? AND term = ? AND student = ?");
-$stmt->execute([$result2[0][6], $row[0], $term, $std]);
-$ex_result = $stmt->fetchAll();
+        $stmt = $conn->prepare("SELECT * FROM tbl_exam_results WHERE class = ? AND subject_combination = ? AND term = ? AND student = ?");
+        $stmt->execute([$result2[0][6], $row[0], $term, $std]);
+        $ex_result = $stmt->fetchAll();
 
-if (!empty($ex_result[0][5])) {
-$score = $ex_result[0][5];
+        if (!empty($ex_result[0][5])) {
+            $total_score = $ex_result[0][5];
+            $internal_marks = round($total_score * 0.4);
+            $theory_marks = round($total_score * 0.6);
+            if ($total_score >= 90) { $grade = "A"; }
+            elseif ($total_score >= 80) { $grade = "B+"; }
+            elseif ($total_score >= 70) { $grade = "B"; }
+            elseif ($total_score >= 60) { $grade = "C+"; }
+            elseif ($total_score >= 50) { $grade = "C"; }
+            else { $grade = "F"; }
+            $final_grade = $grade;
+            $remark = ($total_score >= 50) ? "Pass" : "Fail";
+        }
+
+        $html .= '<tr>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $subject_code . '</td>
+        <td style="text-align:left; vertical-align:top; height:20px">' . $subject_name . '</td>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $credit_hour . '</td>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $internal_marks . '%</td>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $theory_marks . '%</td>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $grade . '</td>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $final_grade . '</td>
+        <td style="text-align:center; vertical-align:middle; height:20px">' . $remark . '</td>
+        </tr>';
+    }
 }
-array_push($subssss, $score);
 
-$tscore = $tscore + $score;
-foreach($grading as $grade)
-{
+$html .= '<tr><td colspan="2" style="text-align:center; height:20px"><b>EXTRA CREDIT SUBJECT</b></td><td colspan="6"></td></tr>';
+$html .= '</table>';
 
-if ($score >= $grade[2] && $score <= $grade[3]) {
+$pdf->writeHTMLCell(170.43, 0, '', '', $html, 0, 1, 0, true, 'L', true);
+$pdf->Ln(5);
 
-$grd = $grade[1];
-$rm = $grade[4];
-
-}
-
-}
-
-$htmls = $htmls.'
+$date_of_issue = date('g:i A +0545, l, F j, Y');
+$html = '<table width="100%">
 <tr>
-<td width="5%">'.$n.'</td>
-<td width="35%" >'.$row[6].'</td>
-<td width="20%" align="center">'.$score.'%</td>
-<td width="20%" align="center">'.$grd.'</td>
-<td width="20%" align="center">'.$rm.'</td>
-</tr>
-';
-?>
-
-<?php
-}
-
-$n++;
-}
-
-$htmls = $htmls.'</table>';
-
-$pdf->writeHTMLCell(0, 0, '', '', $htmls, 0, 1, 0, true, '', true);
-
-if ($t_subjects == "0") {
-$av = '0';
-}else{
-$av = round($tscore/$t_subjects);
-}
-foreach($grading as $grade)
-{
-
-if ($av >= $grade[2] && $av <= $grade[3]) {
-
-$grd_ = $grade[1];
-$rm_ = $grade[4];
-
-}
-
-}
-
-
-
-$html = '<table border="1" cellpadding="3" style="margin-bottom:10px;  font-size: 10px; border-collapse: collapse;" width="100%">
-<tr>
-<td ><b>TOTAL SCORE</b></td>
-<td><b>AVERAGE</b></td>
-<td><b>GRADE</b></td>
-<td><b>REMARK</b></td>
-<td><b>DIVISION</b></td>
-<td><b>POINTS</b></td>
+<td width="33%" style="text-align:center; font-size:11px; font-weight:bold;">PREPARED BY: _____________________</td>
+<td width="33%" style="text-align:center; font-size:11px; font-weight:bold;">CHECKED BY: _____________________</td>
+<td width="33%" style="text-align:center; font-size:11px; font-weight:bold;">DATE OF ISSUE: ' . $date_of_issue . '</td>
 </tr>
 <tr>
-<td align="center">'.$tscore.'</td>
-<td align="center">'.$av.'</td>
-<td align="center">'.$grd_.'</td>
-<td align="center">'.$rm_.'</td>
-<td align="center">'.get_division($subssss).'</td>
-<td align="center">'.get_points($subssss).'</td>
+<td colspan="2"></td>
+<td style="text-align:center; font-size:11px; font-weight:bold;">PRINCIPAL: _____________________</td>
 </tr>
 </table>';
 
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, 'C', true);
+$pdf->Ln(5);
 
-$pdf->cell(0, 0, '', 0, 2, 'C');
-$html = '<b style="font-size:10pt;">Grading System</b>';
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-$html = '<table border="1" cellpadding="3" style="margin-bottom:10px;  font-size: 10px; border-collapse: collapse;" width="100%">';
+$html = '<p style="text-align:center; font-size:10px;">NOTE: ONE CREDIT HOUR EQUALS TO 32 WORKING HOURS</p>
+<p style="text-align:center; font-size:10px;">INTERNAL (IN): THIS COVERS THE PARTICIPATION, PRACTICAL/PROJECT WORKS, PRESENTATIONS TERMINAL EXAMINATIONS.</p>
+<p style="text-align:center; font-size:10px;">THEORY (TH): THIS COVERS WRITTEN EXTERNAL EXAMINATION</p>
+<p style="text-align:center; font-size:10px;">ABS = ABSENT  W = WITHHELD</p>';
 
-$html = $html.'<tr>';
-foreach ($grading as $key => $value) {
-$html = $html.'
-<td align="center">'.$value[1].'</td>
-';
-}
-$html = $html.'</tr>';
-
-$html = $html.'<tr>';
-foreach ($grading as $key => $value) {
-$html = $html.'
-<td align="center">'.$value[2].'% - '.$value[3].'%</td>
-';
-}
-$html = $html.'</tr>';
-
-$html = $html.'<tr>';
-foreach ($grading as $key => $value) {
-$html = $html.'
-<td align="center">'.$value[4].'</td>
-';
-}
-$html = $html.'</tr>';
-
-$html = $html.'</table>';
-$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, 'C', true);
 
 ob_end_clean();
-
-$pdf->Output($title.'.pdf', 'I');
-?>
+$pdf->Output($title . '.pdf', 'I');
