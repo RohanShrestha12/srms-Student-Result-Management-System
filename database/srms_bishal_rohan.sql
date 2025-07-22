@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2025 at 01:16 PM
+-- Generation Time: Jul 22, 2025 at 03:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -82,11 +82,11 @@ CREATE TABLE `tbl_division_system` (
 --
 
 INSERT INTO `tbl_division_system` (`division`, `min`, `max`, `min_point`, `max_point`, `points`) VALUES
-('0', 0, 29, 34, 35, 5),
-('1', 75, 100, 7, 17, 1),
+('0', 0, 29, 34, 34, 0),
+('1', 75, 100, 75, 100, 5),
 ('2', 65, 74, 18, 21, 2),
 ('3', 45, 64, 22, 25, 3),
-('4', 30, 44, 26, 33, 4);
+('4', 30, 44, 18, 22, 5);
 
 -- --------------------------------------------------------
 
@@ -102,6 +102,23 @@ CREATE TABLE `tbl_exam_results` (
   `term` int(11) NOT NULL,
   `score` double NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_exam_results`
+--
+
+INSERT INTO `tbl_exam_results` (`id`, `student`, `class`, `subject_combination`, `term`, `score`) VALUES
+(70, '50230002', 10, 21, 1, 80),
+(71, '50230002', 10, 22, 1, 90),
+(72, '50230002', 10, 23, 1, 82),
+(73, '50230002', 10, 24, 1, 78),
+(74, '50230002', 10, 25, 1, 100),
+(75, '', 10, 21, 1, 100),
+(76, '', 10, 22, 1, 100),
+(77, '', 10, 23, 1, 100),
+(78, '', 10, 24, 1, 100),
+(79, '', 10, 25, 1, 100),
+(80, '', 10, 26, 1, 100);
 
 -- --------------------------------------------------------
 
@@ -122,11 +139,14 @@ CREATE TABLE `tbl_grade_system` (
 --
 
 INSERT INTO `tbl_grade_system` (`id`, `name`, `min`, `max`, `remark`) VALUES
-(1, 'A', 75, 100, 'Excellent'),
-(2, 'B', 65, 74, 'Very Good'),
-(3, 'C', 45, 64, 'Good'),
-(4, 'D', 30, 44, 'Satisfactory'),
-(5, 'F', 0, 29, 'Fail');
+(1, 'A+', 90, 100, 'Outstanding'),
+(2, 'A', 80, 89, 'Excellent'),
+(3, 'B+', 70, 79, 'Very Good'),
+(4, 'B', 60, 69, 'Good'),
+(5, 'C+', 50, 59, 'Satisfactory'),
+(7, 'C', 40, 49, 'Acceptable'),
+(8, 'D', 30, 39, 'Partially Acceptable'),
+(9, 'NG', 0, 29, 'Failed');
 
 -- --------------------------------------------------------
 
@@ -146,7 +166,8 @@ CREATE TABLE `tbl_login_sessions` (
 --
 
 INSERT INTO `tbl_login_sessions` (`session_key`, `staff`, `student`, `ip_address`) VALUES
-('C42S365AS7XF97XNAG9I', 1, NULL, '::1');
+('22VREIZ8CXMNIJB7VMD8', 25, NULL, '::1'),
+('NO8LGQTMMTTY58B8OQH7', 26, NULL, '::1');
 
 -- --------------------------------------------------------
 
@@ -167,7 +188,7 @@ CREATE TABLE `tbl_school` (
 --
 
 INSERT INTO `tbl_school` (`id`, `name`, `logo`, `result_system`, `allow_results`) VALUES
-(1, 'ACHS COLLEGE', 'school_logo1753166845.png', 1, 1);
+(1, 'ACHS COLLEGE', 'school_logo1753183526.png', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -346,7 +367,12 @@ CREATE TABLE `tbl_subject_combinations` (
 --
 
 INSERT INTO `tbl_subject_combinations` (`id`, `class`, `subject`, `teacher`, `reg_date`) VALUES
-(20, 'a:1:{i:0;s:2:\"10\";}', 21, 3, '2025-07-22 16:39:46');
+(21, 'a:1:{i:0;s:2:\"10\";}', 19, 26, '2025-07-22 18:43:29'),
+(22, 'a:1:{i:0;s:2:\"10\";}', 21, 3, '2025-07-22 18:43:49'),
+(23, 'a:1:{i:0;s:2:\"10\";}', 20, 4, '2025-07-22 18:44:04'),
+(24, 'a:1:{i:0;s:2:\"10\";}', 16, 5, '2025-07-22 18:44:16'),
+(25, 'a:1:{i:0;s:2:\"10\";}', 18, 21, '2025-07-22 18:44:30'),
+(26, 'a:1:{i:0;s:2:\"10\";}', 17, 5, '2025-07-22 18:56:52');
 
 -- --------------------------------------------------------
 
@@ -482,13 +508,13 @@ ALTER TABLE `tbl_classes`
 -- AUTO_INCREMENT for table `tbl_exam_results`
 --
 ALTER TABLE `tbl_exam_results`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `tbl_grade_system`
 --
 ALTER TABLE `tbl_grade_system`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_school`
@@ -518,7 +544,7 @@ ALTER TABLE `tbl_subjects`
 -- AUTO_INCREMENT for table `tbl_subject_combinations`
 --
 ALTER TABLE `tbl_subject_combinations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `tbl_terms`
