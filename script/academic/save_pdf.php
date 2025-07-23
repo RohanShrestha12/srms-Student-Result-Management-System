@@ -70,10 +70,9 @@ $pdf->Ln(3);
 // Grade Sheet Header
 $html = '
 <div style="font-size:11px; font-weight:bold; font-family:helvetica; text-align:left; width:0cm;">
-  THE FOLLOWING ARE THE GRADE(S) SECURED BY: '  '
-  <div style="border-bottom:1px solid black; width:-1cm; margin-top:2px;"></div>
-  <br>
-  DATE OF BIRTH: ' . $dob_bs . ' B.S. SYMBOL NO.: ' . $symbol_no . ' GRADE XI IN THE <br>
+  THE FOLLOWING ARE THE GRADE(S) SECURED BY:_____________________________________________
+  <div style=""></div>
+  DATE OF BIRTH: _____________________________________________   B.S. SYMBOL NO:__________________ <br><br> GRADE XI IN THE 
   ANNUAL EXAMINATION CONDUCTED IN ' . $exam_year . ' A.D. ARE GIVEN BELOW.
 </div>';
 
