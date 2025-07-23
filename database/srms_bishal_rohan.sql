@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2025 at 03:50 PM
+-- Generation Time: Jul 23, 2025 at 07:57 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -65,32 +65,6 @@ INSERT INTO `tbl_classes` (`id`, `name`, `registration_date`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tbl_division_system`
---
-
-CREATE TABLE `tbl_division_system` (
-  `division` varchar(50) NOT NULL,
-  `min` int(11) NOT NULL,
-  `max` int(11) NOT NULL,
-  `min_point` int(11) NOT NULL,
-  `max_point` int(11) NOT NULL,
-  `points` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_division_system`
---
-
-INSERT INTO `tbl_division_system` (`division`, `min`, `max`, `min_point`, `max_point`, `points`) VALUES
-('0', 0, 29, 34, 34, 0),
-('1', 75, 100, 75, 100, 5),
-('2', 65, 74, 18, 21, 2),
-('3', 45, 64, 22, 25, 3),
-('4', 30, 44, 18, 22, 5);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tbl_exam_results`
 --
 
@@ -118,7 +92,62 @@ INSERT INTO `tbl_exam_results` (`id`, `student`, `class`, `subject_combination`,
 (77, '', 10, 23, 1, 100),
 (78, '', 10, 24, 1, 100),
 (79, '', 10, 25, 1, 100),
-(80, '', 10, 26, 1, 100);
+(80, '', 10, 26, 1, 100),
+(81, '50230002', 10, 26, 1, 40),
+(82, '50230003', 10, 21, 1, 50),
+(83, '50230003', 10, 22, 1, 60),
+(84, '50230003', 10, 23, 1, 50),
+(85, '50230003', 10, 24, 1, 60),
+(86, '50230003', 10, 25, 1, 70),
+(87, '50230003', 10, 26, 1, 50),
+(88, '50230004', 10, 21, 1, 50),
+(89, '50230004', 10, 22, 1, 40),
+(90, '50230004', 10, 23, 1, 60),
+(91, '50230004', 10, 24, 1, 50),
+(92, '50230004', 10, 25, 1, 60),
+(93, '50230004', 10, 26, 1, 50),
+(94, '50230005', 10, 21, 1, 50),
+(95, '50230005', 10, 22, 1, 50),
+(96, '50230005', 10, 23, 1, 60),
+(97, '50230005', 10, 24, 1, 40),
+(98, '50230005', 10, 25, 1, 50),
+(99, '50230005', 10, 26, 1, 60),
+(100, '50230006', 10, 21, 1, 80),
+(101, '50230006', 10, 22, 1, 60),
+(102, '50230006', 10, 23, 1, 50),
+(103, '50230006', 10, 24, 1, 70),
+(104, '50230006', 10, 25, 1, 60),
+(105, '50230006', 10, 26, 1, 60),
+(106, '50230007', 10, 21, 1, 70),
+(107, '50230007', 10, 22, 1, 40),
+(108, '50230007', 10, 23, 1, 50),
+(109, '50230007', 10, 24, 1, 70),
+(110, '50230007', 10, 25, 1, 60),
+(111, '50230007', 10, 26, 1, 50),
+(112, '50230008', 10, 21, 1, 50),
+(113, '50230008', 10, 22, 1, 60),
+(114, '50230008', 10, 23, 1, 50),
+(115, '50230008', 10, 24, 1, 60),
+(116, '50230008', 10, 25, 1, 50),
+(117, '50230008', 10, 26, 1, 45),
+(118, '50230009', 10, 21, 1, 80),
+(119, '50230009', 10, 22, 1, 70),
+(120, '50230009', 10, 23, 1, 75),
+(121, '50230009', 10, 24, 1, 65),
+(122, '50230009', 10, 25, 1, 78),
+(123, '50230009', 10, 26, 1, 60),
+(124, '50230010', 10, 21, 1, 45),
+(125, '50230010', 10, 22, 1, 50),
+(126, '50230010', 10, 23, 1, 40),
+(127, '50230010', 10, 24, 1, 40),
+(128, '50230010', 10, 25, 1, 55),
+(129, '50230010', 10, 26, 1, 40),
+(130, '50230011', 10, 21, 1, 60),
+(131, '50230011', 10, 22, 1, 70),
+(132, '50230011', 10, 23, 1, 50),
+(133, '50230011', 10, 24, 1, 50),
+(134, '50230011', 10, 25, 1, 60),
+(135, '50230011', 10, 26, 1, 60);
 
 -- --------------------------------------------------------
 
@@ -166,7 +195,7 @@ CREATE TABLE `tbl_login_sessions` (
 --
 
 INSERT INTO `tbl_login_sessions` (`session_key`, `staff`, `student`, `ip_address`) VALUES
-('22VREIZ8CXMNIJB7VMD8', 25, NULL, '::1'),
+('2LF0ECKCTCTLHH7EMZBW', 28, NULL, '::1'),
 ('NO8LGQTMMTTY58B8OQH7', 26, NULL, '::1');
 
 -- --------------------------------------------------------
@@ -255,8 +284,9 @@ INSERT INTO `tbl_staff` (`id`, `fname`, `lname`, `gender`, `email`, `password`, 
 (19, 'JAMIL', 'ABDALLAH', 'Male', 'jamil@srms.test', '$2y$10$l8XYJDrBHTyeZkpupiRhwey6jJihzku0bYXiVtBM5kDRz3sZvSpgC', 2, 1),
 (20, 'JOAN', 'NKYA', 'Female', 'joan@srms.test', '$2y$10$l8XYJDrBHTyeZkpupiRhwey6jJihzku0bYXiVtBM5kDRz3sZvSpgC', 2, 1),
 (21, 'JOSEPH', 'HAMISI', 'Male', 'joseph@srms.test', '$2y$10$l8XYJDrBHTyeZkpupiRhwey6jJihzku0bYXiVtBM5kDRz3sZvSpgC', 2, 1),
-(25, 'Bishal', 'Rauniyar', 'Male', 'bishal2@gmail.com', '$2y$10$or2/5yUffoM7QQWaeGLW0.BJcBTCB9jVx.YScOa9vr1MOMk76KRhS', 1, 1),
-(26, 'Saugat', 'Thapa', 'Male', 'saugat@gmail.com', '$2y$10$ZNGU9aRLjyY5ZQKebFMGc.6qyoBLuOM0o4lLJR6Bc3haFhOrEpSL6', 2, 1);
+(26, 'Saugat', 'Thapa', 'Male', 'saugat@gmail.com', '$2y$10$ZNGU9aRLjyY5ZQKebFMGc.6qyoBLuOM0o4lLJR6Bc3haFhOrEpSL6', 2, 1),
+(27, 'Rohan', 'Shreshta', '', 'rohan@gmail.com', 'Rohan@123', 0, 1),
+(28, 'Rohan', 'Shrestha', 'Male', 'rohansth@gmail.com', '$2y$10$POFRpSvN/5Irib5UErNTzu/eBXfZZ5JmOuSRM6BP5DoiHTg20op66', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -346,7 +376,13 @@ INSERT INTO `tbl_subjects` (`id`, `name`) VALUES
 (18, 'Mathematics'),
 (19, 'Accounting'),
 (20, 'Economics'),
-(21, 'Computer Sciences');
+(21, 'Computer Sciences'),
+(22, 'English-II'),
+(23, 'Nepali-II'),
+(24, 'Mathematics-II'),
+(25, 'Accounting-II'),
+(26, 'Economics-II'),
+(27, 'Computer Science-II');
 
 -- --------------------------------------------------------
 
@@ -372,7 +408,9 @@ INSERT INTO `tbl_subject_combinations` (`id`, `class`, `subject`, `teacher`, `re
 (23, 'a:1:{i:0;s:2:\"10\";}', 20, 4, '2025-07-22 18:44:04'),
 (24, 'a:1:{i:0;s:2:\"10\";}', 16, 5, '2025-07-22 18:44:16'),
 (25, 'a:1:{i:0;s:2:\"10\";}', 18, 21, '2025-07-22 18:44:30'),
-(26, 'a:1:{i:0;s:2:\"10\";}', 17, 5, '2025-07-22 18:56:52');
+(26, 'a:1:{i:0;s:2:\"10\";}', 17, 5, '2025-07-22 18:56:52'),
+(27, 'a:1:{i:0;s:2:\"11\";}', 25, 26, '2025-07-23 10:00:39'),
+(28, 'a:1:{i:0;s:2:\"11\";}', 27, 6, '2025-07-23 10:01:02');
 
 -- --------------------------------------------------------
 
@@ -411,12 +449,6 @@ ALTER TABLE `tbl_announcements`
 --
 ALTER TABLE `tbl_classes`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `tbl_division_system`
---
-ALTER TABLE `tbl_division_system`
-  ADD PRIMARY KEY (`division`);
 
 --
 -- Indexes for table `tbl_exam_results`
@@ -508,7 +540,7 @@ ALTER TABLE `tbl_classes`
 -- AUTO_INCREMENT for table `tbl_exam_results`
 --
 ALTER TABLE `tbl_exam_results`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 
 --
 -- AUTO_INCREMENT for table `tbl_grade_system`
@@ -532,19 +564,19 @@ ALTER TABLE `tbl_smtp`
 -- AUTO_INCREMENT for table `tbl_staff`
 --
 ALTER TABLE `tbl_staff`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `tbl_subjects`
 --
 ALTER TABLE `tbl_subjects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `tbl_subject_combinations`
 --
 ALTER TABLE `tbl_subject_combinations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `tbl_terms`
