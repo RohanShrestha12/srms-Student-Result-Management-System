@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -16,11 +17,7 @@ $role = '3';
 $status = '1';
 $photo = serialize($_FILES["image"]);
 
-
-
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $stmt = $conn->prepare("SELECT id, email FROM tbl_staff WHERE email = ? AND id != ?
   UNION SELECT id, email FROM tbl_students WHERE email = ? AND id != ?");
@@ -29,7 +26,7 @@ $result = $stmt->fetchAll();
 
 if (count($result) > 0) {
 $_SESSION['reply'] = array (array("error",'Email is used'));
-header("location:../students");
+header("location:../students.php");
 }else{
 
 
@@ -61,7 +58,7 @@ $stmt = $conn->prepare("UPDATE tbl_students SET fname=?, mname=?, lname=?, gende
 $stmt->execute([$fname, $mname, $lname, $gender, $email, $class, $img, $reg_no]);
 
 $_SESSION['reply'] = array (array("success",'Student updated successfully'));
-header("location:../students");
+header("location:../students.php");
 }
 
 }catch(PDOException $e)

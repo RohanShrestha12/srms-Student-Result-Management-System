@@ -5,301 +5,528 @@ require_once('db/config.php');
 require_once('const/school.php');
 require_once('const/check_session.php');
 if ($res == "1" && $level == "1") {}else{header("location:../");}
+
+// Set page title for header
+$page_title = 'Subject Combinations Management';
+$include_datatables = true;
+
+// Include the academic header
+require_once('academic/academic-header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<head>
-<title>SRMS - Subject Combinations</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<base href="../">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<link rel="icon" href="images/icon.ico">
-<link rel="stylesheet" type="text/css" href="cdn.jsdelivr.net/npm/bootstrap-icons%401.10.5/font/bootstrap-icons.css">
-<link rel="stylesheet" href="cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css">
-<link type="text/css" rel="stylesheet" href="loader/waitMe.css">
-<link rel="stylesheet" href="select2/dist/css/select2.min.css">
-</head>
-<body class="app sidebar-mini">
 
-<header class="app-header"><a class="app-header__logo" href="javascript:void(0);">SRMS</a>
-<a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
-
-<ul class="app-nav">
-
-<li class="dropdown"><a class="app-nav__item" href="#" data-bs-toggle="dropdown" aria-label="Open Profile Menu"><i class="bi bi-person fs-4"></i></a>
-<ul class="dropdown-menu settings-menu dropdown-menu-right">
-<li><a class="dropdown-item" href="academic/profile"><i class="bi bi-person me-2 fs-5"></i> Profile</a></li>
-<li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2 fs-5"></i> Logout</a></li>
-</ul>
-</li>
-</ul>
-</header>
-
-<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-<aside class="app-sidebar">
-<div class="app-sidebar__user">
-<div>
-<p class="app-sidebar__user-name"><?php echo $fname.' '.$lname; ?></p>
-<p class="app-sidebar__user-designation">Academic</p>
-</div>
-</div>
-<ul class="app-menu">
-<li><a class="app-menu__item" href="academic"><i class="app-menu__icon feather icon-monitor"></i><span class="app-menu__label">Dashboard</span></a></li>
-<li><a class="app-menu__item" href="academic/terms"><i class="app-menu__icon feather icon-folder"></i><span class="app-menu__label">Academic Terms</span></a></li>
-
-<li><a class="app-menu__item" href="academic/classes"><i class="app-menu__icon feather icon-home"></i><span class="app-menu__label">Classes</span></a></li>
-<li><a class="app-menu__item" href="academic/subjects"><i class="app-menu__icon feather icon-book"></i><span class="app-menu__label">Subjects</span></a></li>
-<li><a class="app-menu__item active" href="academic/combinations"><i class="app-menu__icon feather icon-book-open"></i><span class="app-menu__label">Subject Combinations</span></a></li>
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-users"></i><span class="app-menu__label">Students</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-<li><a class="treeview-item" href="academic/promote_students"><i class="icon bi bi-circle-fill"></i> Promote Students</a></li>
-</ul>
-</li>
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-file-text"></i><span class="app-menu__label">Examination Results</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-
-<li><a class="treeview-item" href="academic/manage_results"><i class="icon bi bi-circle-fill"></i> Manage Results</a></li>
-<li><a class="treeview-item" href="academic/individual_results"><i class="icon bi bi-circle-fill"></i> Individual Results</a></li>
-</ul>
-</li>
-<li><a class="app-menu__item" href="academic/report"><i class="app-menu__icon feather icon-bar-chart-2"></i><span class="app-menu__label">Report Tool</span></a></li>
-<li><a class="app-menu__item" href="academic/grading-system"><i class="app-menu__icon feather icon-award"></i><span class="app-menu__label">Grading System</span></a></li>
-<li><a class="app-menu__item" href="academic/announcement"><i class="app-menu__icon feather icon-bell"></i><span class="app-menu__label">Announcements</span></a></li>
-</ul>
-</aside>
-<main class="app-content">
 <div class="app-title">
-<div>
-<h1>Subject Combinations</h1>
-</div>
-<ul class="app-breadcrumb breadcrumb">
-<li class="breadcrumb-item"><button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addModal">Add</button></li>
-</ul>
+    <div>
+        <h1><i class="bi bi-collection me-2"></i>Subject Combinations Management</h1>
+        <p>Manage subject combinations and teacher assignments</p>
+    </div>
+    <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="bi bi-plus-circle me-2"></i>Add Combination
+            </button>
+        </li>
+    </ul>
 </div>
 
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stats-card bg-light">
+            <div class="stats-icon text-primary">
+                <i class="bi bi-collection"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="totalCombinations">0</h3>
+                <p class="text-muted">Total Combinations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card bg-light">
+            <div class="stats-icon text-success">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="totalTeachers">0</h3>
+                <p class="text-muted">Assigned Teachers</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card bg-light">
+            <div class="stats-icon text-info">
+                <i class="bi bi-building"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="totalClasses">0</h3>
+                <p class="text-muted">Active Classes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Subject Combination Modal -->
 <div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-<div class="modal-content ">
-<div class="modal-header">
-<h5 class="modal-title" id="addModalLabel">Add Subject Combinations</h5>
-</div>
-<div class="modal-body">
-<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/new_comb">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="addModalLabel">
+                    <i class="bi bi-plus-circle me-2"></i>Add Subject Combination
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/new_comb.php">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-book me-2"></i>Select Subject
+                            </label>
+                            <select class="form-control select2" name="subject" required style="width: 100%;">
+                                <option selected disabled value="">Choose a subject</option>
+                                <?php
+                                try {
+                                    $stmt = $conn->prepare("SELECT * FROM tbl_subjects ORDER BY name");
+                                    $stmt->execute();
+                                    $result = $stmt->fetchAll();
 
+                                    foreach($result as $row) {
+                                ?>
+                                    <option value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?></option>
+                                <?php
+                                    }
+                                } catch(PDOException $e) {
+                                    echo "Connection failed: " . $e->getMessage();
+                                }
+                                ?>
+                            </select>
+                        </div>
 
-<div class="mb-2">
-<label class="form-label">Select Subject</label>
-<select class="form-control select2" name="subject" required style="width: 100%;">
-<option selected disabled value="">Select one</option>
-<?php
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-building me-2"></i>Select Classes
+                            </label>
+                            <select multiple="true" class="form-control select2" name="class[]" required style="width: 100%;">
+                                <?php
+                                try {
+                                    $stmt = $conn->prepare("SELECT * FROM tbl_classes ORDER BY name");
+                                    $stmt->execute();
+                                    $result = $stmt->fetchAll();
 
-$stmt = $conn->prepare("SELECT * FROM tbl_subjects ORDER BY name");
-$stmt->execute();
-$result = $stmt->fetchAll();
+                                    foreach($result as $row) {
+                                ?>
+                                    <option value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?></option>
+                                <?php
+                                    }
+                                } catch(PDOException $e) {
+                                    echo "Connection failed: " . $e->getMessage();
+                                }
+                                ?>
+                            </select>
+                            <div class="form-text">Hold Ctrl/Cmd to select multiple classes</div>
+                        </div>
 
-foreach($result as $row)
-{
-?>
-<option value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?> </option>
-<?php
-}
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-person-workspace me-2"></i>Select Teacher
+                            </label>
+                            <select class="form-control select2" name="teacher" required style="width: 100%;">
+                                <option selected disabled value="">Choose a teacher</option>
+                                <?php
+                                try {
+                                    $stmt = $conn->prepare("SELECT * FROM tbl_staff WHERE level = '2' ORDER BY fname, lname");
+                                    $stmt->execute();
+                                    $result = $stmt->fetchAll();
 
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-?>
-</select>
-</div>
+                                    foreach($result as $row) {
+                                ?>
+                                    <option value="<?php echo $row[0]; ?>"><?php echo $row[1].' '.$row[2]; ?></option>
+                                <?php
+                                    }
+                                } catch(PDOException $e) {
+                                    echo "Connection failed: " . $e->getMessage();
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
 
-
-<div class="mb-2">
-<label class="form-label">Select Class</label>
-<select multiple="true" class="form-control select2" name="class[]" required style="width: 100%;">
-<?php
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-$stmt = $conn->prepare("SELECT * FROM tbl_classes");
-$stmt->execute();
-$result = $stmt->fetchAll();
-
-foreach($result as $row)
-{
-?>
-<option value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?> </option>
-<?php
-}
-
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-?>
-</select>
-</div>
-
-<div class="mb-3">
-<label class="form-label">Select Teacher</label>
-<select class="form-control select2" name="teacher" required style="width: 100%;">
-<option selected disabled value="">Select one</option>
-<?php
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-$stmt = $conn->prepare("SELECT * FROM tbl_staff WHERE level = '2'");
-$stmt->execute();
-$result = $stmt->fetchAll();
-
-foreach($result as $row)
-{
-?>
-<option value="<?php echo $row[0]; ?>"><?php echo $row[1].' '.$row[2]; ?> </option>
-<?php
-}
-
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-?>
-</select>
-</div>
-
-<button type="submit" name="submit" value="1" class="btn btn-primary app_btn">Add</button>
-<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-</form>
-</div>
-
-</div>
-</div>
+                    <div class="modal-footer px-0 pb-0">
+                        <button type="submit" name="submit" value="1" class="btn btn-primary btn-lg app_btn">
+                            <i class="bi bi-check-circle me-2"></i>Add Combination
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Edit Subject Combination Modal -->
 <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title" id="editModalLabel">Edit Subject Combination</h5>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="editModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Subject Combination
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="comb_feedback">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal-body" id="comb_feedback">
 
-</div>
-
-</div>
-</div>
-</div>
-
+<!-- Subject Combinations Table -->
 <div class="row">
-<div class="col-md-12">
-<div class="tile">
-<div class="tile-body">
-<div class="table-responsive">
-<h3 class="tile-title">Subject Combinations</h3>
-<table class="table table-hover table-bordered" id="srmsTable">
-<thead>
-<tr>
-<th>Subject</th>
-<th>Teacher</th>
-<th>Classes</th>
-<th>Added On</th>
-<th width="120" align="center"></th>
-</tr>
-</thead>
-<tbody>
-<?php
+    <div class="col-md-12">
+        <div class="dashboard-widget">
+            <div class="widget-header">
+                <h5><i class="bi bi-table me-2"></i>Subject Combinations List</h5>
+            </div>
+            <div class="widget-content">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped" id="srmsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="60" class="text-center">#</th>
+                                <th><i class="bi bi-book me-2"></i>Subject</th>
+                                <th><i class="bi bi-person-workspace me-2"></i>Teacher</th>
+                                <th><i class="bi bi-building me-2"></i>Classes</th>
+                                <th><i class="bi bi-calendar me-2"></i>Added On</th>
+                                <th width="150" class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            try {
+                                $empty_classes = array();
 
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                $stmt = $conn->prepare("SELECT * FROM tbl_classes ORDER BY name");
+                                $stmt->execute();
+                                $classes = $stmt->fetchAll();
 
-$empty_classes = array();
+                                foreach ($classes as $value) {
+                                    $empty_classes[$value[0]] = $value[1];
+                                }
 
-$stmt = $conn->prepare("SELECT * FROM tbl_classes");
-$stmt->execute();
-$classes = $stmt->fetchAll();
+                                $stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations
+                                  LEFT JOIN tbl_subjects ON tbl_subject_combinations.subject = tbl_subjects.id
+                                  LEFT JOIN tbl_staff ON tbl_subject_combinations.teacher = tbl_staff.id
+                                  ORDER BY tbl_subjects.name");
+                                $stmt->execute();
+                                $result = $stmt->fetchAll();
 
-foreach ($classes as $value) {
-$empty_classes[$value[0]] = $value[1];
+                                if (count($result) > 0) {
+                                    $counter = 1;
+                                    foreach($result as $row) {
+                                        $class_list = unserialize($row[1]);
+                            ?>
+                                        <tr>
+                                            <td class="text-center">
+                                                <span class="badge bg-secondary rounded-pill"><?php echo $counter; ?></span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="subject-icon me-3">
+                                                        <i class="bi bi-book text-muted"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($row[6]); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="teacher-icon me-3">
+                                                        <i class="bi bi-person-workspace text-muted"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($row[8].' '.$row[9]); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="class-tags">
+                                                    <?php
+                                                    $st = 1;
+                                                    foreach ($class_list as $value2) {
+                                                        $class_name = isset($empty_classes[$value2]) ? $empty_classes[$value2] : 'Unknown Class (ID: ' . $value2 . ')';
+                                                        if ($st < count($class_list)) {
+                                                            echo '<span class="badge bg-primary me-1">'.$class_name.'</span>';
+                                                        } else {
+                                                            echo '<span class="badge bg-primary">'.$class_name.'</span>';
+                                                        }
+                                                        $st++;
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted"><?php echo date('M j, Y', strtotime($row[4])); ?></small>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="action-buttons">
+                                                    <button onclick="set_combination('<?php echo $row[0]; ?>');" 
+                                                            class="btn btn-edit" 
+                                                            data-bs-toggle="modal" data-bs-target="#editModal"
+                                                            title="Edit Combination">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                    <button onclick="del('academic/core/drop_comb.php?id=<?php echo $row[0]; ?>', 'Are you sure you want to delete this subject combination?');"
+                                                            class="btn btn-delete"
+                                                            title="Delete Combination">
+                                                        <i class="bi bi-trash3"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                            <?php
+                                        $counter++;
+                                    }
+                                } else {
+                            ?>
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <i class="bi bi-collection fs-1 text-muted mb-3 d-block"></i>
+                                                <h5 class="text-muted">No Subject Combinations Found</h5>
+                                                <p class="text-muted mb-3">No subject combinations have been added yet. Start by adding your first combination.</p>
+                                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                    <i class="bi bi-plus-circle me-2"></i>Add First Combination
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                            <?php
+                                }
+                            } catch(PDOException $e) {
+                            ?>
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="alert alert-danger">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            <strong>Connection Error:</strong> <?php echo $e->getMessage(); ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stats-card {
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border: 1px solid #e9ecef;
 }
 
-
-$stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations
-  LEFT JOIN tbl_subjects ON tbl_subject_combinations.subject = tbl_subjects.id
-  LEFT JOIN tbl_staff ON tbl_subject_combinations.teacher = tbl_staff.id");
-$stmt->execute();
-$result = $stmt->fetchAll();
-
-foreach($result as $row)
-{
-$class_list = unserialize($row[1]);
-?>
-
-<tr>
-<td><?php echo $row[6]; ?></td>
-<td><?php echo $row[8].' '.$row[9]; ?></td>
-<td>
-<?php
-$st = 1;
-foreach ($class_list as $value2) {
-if ($st < count($class_list)) {
-print ''.$empty_classes[$value2].', ';
-}else{
-print ''.$empty_classes[$value2].'';
-}
-$st++;
-}
-?>
-</td>
-<td><?php echo $row[4]; ?></td>
-<td align="center">
-<a onclick="set_combination('<?php echo $row[0]; ?>');" class="btn btn-primary btn-sm" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
-<a onclick="del('academic/core/drop_comb?id=<?php echo $row[0]; ?>', 'Delete Subject Combination?');" class="btn btn-danger btn-sm" href="javascript:void(0);">Delete</a>
-</td>
-</tr>
-<?php
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
+.stats-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
 }
 
-?>
+.stats-content h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #495057;
+}
 
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
+.stats-content p {
+    margin-bottom: 0;
+}
 
-</main>
+.dashboard-widget {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
 
-<script src="js/jquery-3.7.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
-<script src="loader/waitMe.js"></script>
-<script src="js/sweetalert2@11.js"></script>
-<script src="js/forms.js"></script>
-<script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.html"></script>
-<script type="text/javascript">$('#srmsTable').DataTable({"sort" : false});</script>
-<script src="select2/dist/js/select2.full.min.js"></script>
-<?php require_once('const/check-reply.php'); ?>
+.widget-header {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.widget-header h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.widget-content {
+    padding: 20px;
+}
+
+.subject-icon, .teacher-icon {
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 1px solid #e9ecef;
+}
+
+.empty-state {
+    padding: 40px 20px;
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+    background-color: #f8f9fa;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+.btn-edit:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}
+
+.btn-delete:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.4);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}
+
+.btn-edit i, .btn-delete i {
+    font-size: 16px;
+}
+
+.modal-content {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-radius: 10px 10px 0 0;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.class-tags .badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: #f8f9fa;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: #e9ecef;
+}
+</style>
+
 <script>
-$('.select2').select2({
-dropdownParent: $("#addModal")
-})
-</script>
-</body>
+// Update statistics
+document.addEventListener('DOMContentLoaded', function() {
+    const totalCombinations = document.querySelectorAll('#srmsTable tbody tr').length;
+    const emptyRow = document.querySelector('#srmsTable tbody tr td[colspan="6"]');
+    
+    if (emptyRow) {
+        document.getElementById('totalCombinations').textContent = '0';
+        document.getElementById('totalTeachers').textContent = '0';
+        document.getElementById('totalClasses').textContent = '0';
+    } else {
+        document.getElementById('totalCombinations').textContent = totalCombinations;
+        document.getElementById('totalTeachers').textContent = totalCombinations; // Assuming one teacher per combination
+        document.getElementById('totalClasses').textContent = '0'; // This would need to be calculated
+    }
+});
 
-</html>
+// Initialize Select2
+$(document).ready(function() {
+    $('.select2').select2({
+        dropdownParent: $("#addModal"),
+        theme: "bootstrap-5"
+    });
+});
+</script>
+
+<?php
+// Include the academic footer
+require_once('academic/academic-footer.php');
+?>

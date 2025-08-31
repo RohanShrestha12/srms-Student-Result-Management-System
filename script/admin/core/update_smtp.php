@@ -2,29 +2,25 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
+require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$smtp_server = $_POST['mail_server'];
-$smtp_username = $_POST['mail_username'];
-$smtp_password = $_POST['mail_password'];
-$smtp_conn_type = $_POST['mail_security'];
-$smtp_conn_port = $_POST['mail_port'];
-
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
-$stmt = $conn->prepare("UPDATE tbl_smtp SET server = ?, username = ?, password = ?, port = ?, encryption = ?");
-$stmt->execute([$smtp_server, $smtp_username, $smtp_password, $smtp_conn_port, $smtp_conn_type]);
+$stmt = $conn->prepare("UPDATE tbl_smtp SET server = ?, username = ?, password = ?, port = ?, encryption = ? WHERE id = 1");
+$stmt->execute([$_POST['mail_server'], $_POST['mail_username'], $_POST['mail_password'], $_POST['mail_port'], $_POST['mail_security']]);
+
 $_SESSION['reply'] = array (array("success","SMTP settings updated"));
-header("location:../smtp");
+header("location:../smtp.php");
 
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();
 }
-
 
 }else{
 header("location:../");

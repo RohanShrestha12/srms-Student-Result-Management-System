@@ -4,282 +4,820 @@ session_start();
 require_once('db/config.php');
 require_once('const/school.php');
 require_once('const/check_session.php');
-if ($res == "1" && $level == "0") {}else{header("location:../");}
-if (!isset($_SESSION['student_list'])) {
-header("location:./");
+if ($res == "1" && $level == "0") {
+} else {
+    header("location:../");
 }
-$students = $_SESSION['student_list'];
-//$matches = implode(',', $students);
-//$matches = preg_replace('/[A-Z0-9]/', '?', $matches);
-$matches = str_split(str_repeat("?", count($students)));
-$matches = implode(',', $matches);
-// print_r($matches);
-// exit;
+
+// Set page title and include datatables
+$page_title = "Manage Students";
+$include_datatables = true;
+
+// Include the admin header
+include('admin-header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<head>
-<title>SRMS - Manage Students</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<base href="../">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<link rel="icon" href="images/icon.ico">
-<link rel="stylesheet" type="text/css" href="cdn.jsdelivr.net/npm/bootstrap-icons%401.10.5/font/bootstrap-icons.css">
-<link rel="stylesheet" href="cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css">
-<link type="text/css" rel="stylesheet" href="loader/waitMe.css">
-<link rel="stylesheet" href="select2/dist/css/select2.min.css">
-</head>
-<body class="app sidebar-mini">
 
-<header class="app-header"><a class="app-header__logo" href="javascript:void(0);">SRMS</a>
-<a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
-
-<ul class="app-nav">
-
-<li class="dropdown"><a class="app-nav__item" href="#" data-bs-toggle="dropdown" aria-label="Open Profile Menu"><i class="bi bi-person fs-4"></i></a>
-<ul class="dropdown-menu settings-menu dropdown-menu-right">
-<li><a class="dropdown-item" href="admin/profile"><i class="bi bi-person me-2 fs-5"></i> Profile</a></li>
-<li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2 fs-5"></i> Logout</a></li>
-</ul>
-</li>
-</ul>
-</header>
-
-<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-<aside class="app-sidebar">
-<div class="app-sidebar__user">
-<div>
-<p class="app-sidebar__user-name"><?php echo $fname.' '.$lname; ?></p>
-<p class="app-sidebar__user-designation">Administrator</p>
-</div>
-</div>
-<ul class="app-menu">
-<li><a class="app-menu__item" href="admin"><i class="app-menu__icon feather icon-monitor"></i><span class="app-menu__label">Dashboard</span></a></li>
-<li><a class="app-menu__item" href="admin/academic"><i class="app-menu__icon feather icon-user"></i><span class="app-menu__label">Academic Account</span></a></li>
-<li><a class="app-menu__item" href="admin/teachers"><i class="app-menu__icon feather icon-user"></i><span class="app-menu__label">Teachers</span></a></li>
-
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-users"></i><span class="app-menu__label">Students</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-<li><a class="treeview-item" href="admin/register_students"><i class="icon bi bi-circle-fill"></i> Register Students</a></li>
-<li><a class="treeview-item" href="admin/import_students"><i class="icon bi bi-circle-fill"></i> Import Students</a></li>
-<li><a class="treeview-item" href="admin/manage_students"><i class="icon bi bi-circle-fill"></i> Manage Students</a></li>
-</ul>
-</li>
-<li><a class="app-menu__item" href="admin/report"><i class="app-menu__icon feather icon-bar-chart-2"></i><span class="app-menu__label">Report Tool</span></a></li>
-<li><a class="app-menu__item" href="admin/smtp"><i class="app-menu__icon feather icon-mail"></i><span class="app-menu__label">SMTP Settings</span></a></li>
-<li><a class="app-menu__item" href="admin/system"><i class="app-menu__icon feather icon-settings"></i><span class="app-menu__label">System Settings</span></a></li>
-</ul>
-</aside>
-
-<main class="app-content">
 <div class="app-title">
-<div>
-<h1>Manage Students</h1>
-</div>
+    <div>
+        <h1><i class="bi bi-people me-2"></i>Manage Students</h1>
+        <p>View and manage all students in the system</p>
+    </div>
+    <div class="app-title-actions">
+        <a href="admin/register_students.php" class="btn btn-primary">
+            <i class="bi bi-person-plus me-2"></i>Add New Student
+        </a>
+        <a href="admin/import_students.php" class="btn btn-outline-primary">
+            <i class="bi bi-upload me-2"></i>Import Students
+        </a>
+    </div>
 </div>
 
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-icon bg-primary">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="totalStudents">0</h3>
+                <p>Total Students</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-icon bg-success">
+                <i class="bi bi-person-check"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="activeStudents">0</h3>
+                <p>Active Students</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-icon bg-info">
+                <i class="bi bi-mortarboard"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="totalClasses">0</h3>
+                <p>Total Classes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-icon bg-warning">
+                <i class="bi bi-gender-ambiguous"></i>
+            </div>
+            <div class="stats-content">
+                <h3 id="maleStudents">0</h3>
+                <p>Male Students</p>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Filters and Search -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="tile">
+            <div class="tile-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Filter by Class</label>
+                        <select class="form-control" id="classFilter">
+                            <option value="">All Classes</option>
+                            <?php
+                            try {
+                                $stmt = $conn->prepare("SELECT id, name FROM tbl_classes ORDER BY name ASC");
+                                $stmt->execute();
+                                $classes = $stmt->fetchAll();
+                                
+                                foreach ($classes as $class) {
+                                    echo '<option value="' . $class[0] . '">' . htmlspecialchars($class[1]) . '</option>';
+                                }
+                            } catch (PDOException $e) {
+                                echo '<option value="">Error loading classes</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Filter by Gender</label>
+                        <select class="form-control" id="genderFilter">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Search Students</label>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by name, email, or ID...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Records per Page</label>
+                        <select class="form-control" id="perPageSelect">
+                            <option value="10">10 per page</option>
+                            <option value="25">25 per page</option>
+                            <option value="50">50 per page</option>
+                            <option value="100">100 per page</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-primary w-100" onclick="refreshTable()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Students Table -->
 <div class="row">
-<div class="col-md-12">
-<div class="tile">
-<div class="tile-body">
-<div class="table-responsive">
-<h3 class="tile-title">Manage Students</h3>
-<table class="table table-hover table-bordered" id="srmsTable">
-<thead>
-<tr>
-<th></th>
-<th>Registration Number</th>
-<th>Firstname</th>
-<th>Middlename</th>
-<th>Lastname</th>
-<th>Gender</th>
-<th>Email</th>
-<th>Class</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<?php
-
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-$empty_classes = array();
-
-$stmt = $conn->prepare("SELECT * FROM tbl_classes");
-$stmt->execute();
-$classes = $stmt->fetchAll();
-
-foreach ($classes as $value) {
-$empty_classes[$value[0]] = $value[1];
-}
-
-
-$stmt = $conn->prepare("SELECT * FROM tbl_students WHERE class IN ($matches)");
-$stmt->execute($students);
-$result = $stmt->fetchAll();
-
-foreach($result as $row)
-{
-?>
-
-<tr>
-<td width="10">
-<?php
-if ($row[9] == "DEFAULT") {
-?><img src="images/students/<?php echo $row[4]; ?>.png" class="avatar_img_sm"><?php
-}else{
-?><img src="images/students/<?php echo $row[9]; ?>" class="avatar_img_sm"><?php
-}
-?>
-</td>
-<td><?php echo $row[0]; ?></td>
-<td><?php echo $row[1]; ?></td>
-<td><?php echo $row[2]; ?></td>
-<td><?php echo $row[3]; ?></td>
-<td><?php echo $row[4]; ?></td>
-<td><?php echo $row[5]; ?></td>
-<td><?php echo $empty_classes[$row[6]]; ?></td>
-
-<td align="center" width="130">
-
-<textarea style="display:none;" id="fname_<?php echo $row[0]; ?>"><?php echo $row[1]; ?></textarea>
-<textarea style="display:none;" id="mname_<?php echo $row[0]; ?>"><?php echo $row[2]; ?></textarea>
-<textarea style="display:none;" id="lname_<?php echo $row[0]; ?>"><?php echo $row[3]; ?></textarea>
-<textarea style="display:none;" id="gender_<?php echo $row[0]; ?>"><?php echo $row[4]; ?></textarea>
-
-<textarea style="display:none;" id="email_<?php echo $row[0]; ?>"><?php echo $row[5]; ?></textarea>
-<textarea style="display:none;" id="class_<?php echo $row[0]; ?>"><?php echo $row[6]; ?></textarea>
-<textarea style="display:none;" id="img_<?php echo $row[0]; ?>"><?php echo $row[9]; ?></textarea>
-<textarea style="display:none;" id="status_<?php echo $row[0]; ?>"><?php echo $row[10]; ?></textarea>
-
-<a onclick="set_student('<?php echo $row[0]; ?>');" class="btn btn-primary btn-sm" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
-<a onclick="del('admin/core/drop_student?id=<?php echo $row[0]; ?>&img=<?php echo $row[9]; ?>', 'Delete Student?');" class="btn btn-danger btn-sm" href="javascript:void(0);">Delete</a>
-</td>
-
-</tr>
-<?php
-}
-
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-
-?>
-
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
+    <div class="col-md-12">
+        <div class="tile">
+            <div class="tile-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="srmsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th width="50">#</th>
+                                <th width="80">Photo</th>
+                                <th>Registration ID</th>
+                                <th>Full Name</th>
+                                <th>Gender</th>
+                                <th>Email</th>
+                                <th>Class</th>
+                                <th>Status</th>
+                                <th width="150">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Student data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination Controls -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="pagination-info">
+                            <small class="text-muted">
+                                Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalRecords">0</span> students
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <nav aria-label="Student pagination">
+                            <ul class="pagination justify-content-end" id="paginationControls">
+                                <!-- Pagination buttons will be generated here -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title" id="editModalLabel">Edit Student</h5>
-</div>
-<div class="modal-body">
+<!-- Edit Student Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">
+                    <i class="bi bi-pencil me-2"></i>Edit Student
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" action="admin/core/update_student.php" class="app_frm" method="POST" autocomplete="OFF">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">First Name</label>
+                                <input id="fname" name="fname" required class="form-control" onkeypress="return lettersOnly(event)" type="text" placeholder="Enter first name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Middle Name</label>
+                                <input id="mname" name="mname" required class="form-control" onkeypress="return lettersOnly(event)" type="text" placeholder="Enter middle name">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Last Name</label>
+                                <input id="lname" name="lname" required class="form-control" onkeypress="return lettersOnly(event)" type="text" placeholder="Enter last name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Gender</label>
+                                <select id="gender" class="form-control" name="gender" required>
+                                    <option selected disabled value="">Select gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-<form enctype="multipart/form-data" action="admin/core/update_student" class="app_frm" method="POST" autocomplete="OFF">
-<div class="mb-2">
-<label class="form-label">First Name</label>
-<input id="fname" name="fname" required class="form-control" onkeypress="return lettersOnly(event)" type="text" placeholder="Enter first name">
-</div>
-<div class="mb-2">
-<label class="form-label">Middle Name</label>
-<input id="mname" name="mname" required class="form-control" onkeypress="return lettersOnly(event)" type="text" placeholder="Enter middle name">
-</div>
-<div class="mb-2">
-<label class="form-label">Last Name</label>
-<input id="lname" name="lname" required class="form-control" onkeypress="return lettersOnly(event)" type="text" placeholder="Enter last name">
-</div>
-<div class="mb-2">
-<label class="form-label">Gender</label>
-<select id="gender" class="form-control" name="gender" required>
-<option selected disabled value="">Select gender</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
-</select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email Address</label>
+                                <input id="email" name="email" required class="form-control" type="email" placeholder="Enter email address">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Class</label>
+                                <select id="class" class="form-control select2" name="class" required style="width: 100%;">
+                                    <option value="" selected disabled>Select Class</option>
+                                    <?php
+                                    try {
+                                        $stmt = $conn->prepare("SELECT id, name FROM tbl_classes ORDER BY name ASC");
+                                        $stmt->execute();
+                                        $classes = $stmt->fetchAll();
+                                        
+                                        foreach ($classes as $class) {
+                                            echo '<option value="' . $class[0] . '">' . htmlspecialchars($class[1]) . '</option>';
+                                        }
+                                    } catch (PDOException $e) {
+                                        echo '<option value="">Error loading classes</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Display Image (Optional)</label>
+                        <input name="image" class="form-control" type="file" accept=".png, .jpg, .jpeg">
+                        <div class="form-text">Leave empty to keep current image</div>
+                    </div>
+
+                    <input type="hidden" name="old_photo" id="photo">
+                    <input type="hidden" name="id" id="id">
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </button>
+                        <button class="btn btn-primary app_btn" type="submit">
+                            <i class="bi bi-check-circle me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="mb-2">
-<label class="form-label">Select Class</label>
-<select id="class" class="form-control select2" name="class" required style="width: 100%;">
-<option value="" selected disabled> Select One</option>
-<?php
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-$stmt = $conn->prepare("SELECT * FROM tbl_classes");
-$stmt->execute();
-$result = $stmt->fetchAll();
-
-foreach($result as $row)
-{
-?>
-<option value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?> </option>
-<?php
-}
-
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-?>
-</select>
+<!-- View Student Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalLabel">
+                    <i class="bi bi-person me-2"></i>Student Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="student-photo-container">
+                            <img id="viewPhoto" src="" alt="Student Photo" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="student-details">
+                            <h4 id="viewName" class="mb-3"></h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Registration ID:</strong> <span id="viewId"></span></p>
+                                    <p><strong>Email:</strong> <span id="viewEmail"></span></p>
+                                    <p><strong>Gender:</strong> <span id="viewGender"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Class:</strong> <span id="viewClass"></span></p>
+                                    <p><strong>Status:</strong> <span id="viewStatus"></span></p>
+                                    <p><strong>Registration Date:</strong> <span id="viewDate"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editStudentFromView()">Edit Student</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="mb-2">
-<label class="form-label">Email</label>
-<input id="email" name="email" required class="form-control" type="text" placeholder="Enter email address">
-</div>
-
-<div class="mb-3">
-<label class="form-label">Display Image (Optional)</label>
-<input name="image" class="form-control" type="file" accept=".png, .jpg, .jpeg">
-</div>
-
-<input type="hidden" name="old_photo" id="photo">
-<input type="hidden" name="id" id="id">
-<div class="">
-<button class="btn btn-primary app_btn" type="submit">Save</button>
-<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-</div>
-</form>
-
-</div>
-
-</div>
-</div>
-</div>
-
-</main>
-
-<script src="js/jquery-3.7.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
-<script src="loader/waitMe.js"></script>
-<script src="js/sweetalert2@11.js"></script>
-<script src="js/forms.js"></script>
-<script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.html"></script>
-<script type="text/javascript">$('#srmsTable').DataTable({"sort" : false});</script>
-<script src="select2/dist/js/select2.full.min.js"></script>
-<?php require_once('const/check-reply.php'); ?>
 <script>
+// Global variables for pagination
+let currentPage = 1;
+let totalPages = 1;
+let totalRecords = 0;
+let perPage = 10;
 
+// Initialize Select2
+$(document).ready(function() {
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Select Class',
+        allowClear: true
+    });
+    
+    // Load initial data
+    loadStudents();
+    loadStatistics();
+    
+    // Setup filters
+    $('#classFilter, #genderFilter').change(function() {
+        currentPage = 1; // Reset to first page when filters change
+        loadStudents();
+    });
+    
+    // Setup search
+    $('#searchInput').on('keyup', function() {
+        currentPage = 1; // Reset to first page when searching
+        loadStudents();
+    });
+    
+    // Setup per page selector
+    $('#perPageSelect').change(function() {
+        perPage = parseInt($(this).val());
+        currentPage = 1; // Reset to first page when changing per page
+        loadStudents();
+    });
+});
+
+function loadStudents() {
+    const classFilter = $('#classFilter').val();
+    const genderFilter = $('#genderFilter').val();
+    const searchTerm = $('#searchInput').val();
+    
+    // Show loading state
+    $('#studentsTableBody').html('<tr><td colspan="9" class="text-center"><div class="loading-spinner"></div> Loading students...</td></tr>');
+    
+    $.ajax({
+        url: 'admin/core/get_students.php',
+        type: 'POST',
+        data: {
+            class_filter: classFilter,
+            gender_filter: genderFilter,
+            search_term: searchTerm,
+            page: currentPage,
+            per_page: perPage
+        },
+        xhrFields: {
+            withCredentials: true
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        },
+        success: function(response) {
+            $('#studentsTableBody').html(response);
+        },
+        error: function(xhr, status, error) {
+            if (xhr.status === 401 || xhr.status === 403) {
+                // Session expired or access denied
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+            } else {
+                $('#studentsTableBody').html('<tr><td colspan="9" class="text-center text-danger">Error loading students. Please try again.</td></tr>');
+            }
+        }
+    });
+}
+
+function updatePagination(paginationInfo) {
+    currentPage = paginationInfo.current_page;
+    totalPages = paginationInfo.total_pages;
+    totalRecords = paginationInfo.total_records;
+    perPage = paginationInfo.per_page;
+    
+    // Update pagination info
+    $('#showingFrom').text(paginationInfo.showing_from);
+    $('#showingTo').text(paginationInfo.showing_to);
+    $('#totalRecords').text(paginationInfo.total_records);
+    
+    // Generate pagination controls
+    generatePaginationControls();
+}
+
+function generatePaginationControls() {
+    const paginationContainer = $('#paginationControls');
+    paginationContainer.empty();
+    
+    if (totalPages <= 1) {
+        return; // No pagination needed
+    }
+    
+    // Previous button
+    const prevDisabled = currentPage <= 1 ? 'disabled' : '';
+    paginationContainer.append(`
+        <li class="page-item ${prevDisabled}">
+            <a class="page-link" href="#" onclick="goToPage(${currentPage - 1})" ${prevDisabled}>
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+    `);
+    
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    // First page
+    if (startPage > 1) {
+        paginationContainer.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="goToPage(1)">1</a>
+            </li>
+        `);
+        if (startPage > 2) {
+            paginationContainer.append(`
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `);
+        }
+    }
+    
+    // Page numbers
+    for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === currentPage ? 'active' : '';
+        paginationContainer.append(`
+            <li class="page-item ${activeClass}">
+                <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+            </li>
+        `);
+    }
+    
+    // Last page
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            paginationContainer.append(`
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `);
+        }
+        paginationContainer.append(`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="goToPage(${totalPages})">${totalPages}</a>
+            </li>
+        `);
+    }
+    
+    // Next button
+    const nextDisabled = currentPage >= totalPages ? 'disabled' : '';
+    paginationContainer.append(`
+        <li class="page-item ${nextDisabled}">
+            <a class="page-link" href="#" onclick="goToPage(${currentPage + 1})" ${nextDisabled}>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+    `);
+}
+
+function goToPage(page) {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+        currentPage = page;
+        loadStudents();
+    }
+}
+
+function loadStatistics() {
+    $.ajax({
+        url: 'admin/core/get_student_stats.php',
+        type: 'POST',
+        xhrFields: {
+            withCredentials: true
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        },
+        success: function(response) {
+            const stats = JSON.parse(response);
+            $('#totalStudents').text(stats.total);
+            $('#activeStudents').text(stats.active);
+            $('#totalClasses').text(stats.classes);
+            $('#maleStudents').text(stats.male);
+        },
+        error: function(xhr, status, error) {
+            if (xhr.status === 401 || xhr.status === 403) {
+                console.log('Session expired while loading statistics');
+            } else {
+                console.log('Error loading statistics');
+            }
+        }
+    });
+}
+
+function refreshTable() {
+    currentPage = 1; // Reset to first page
+    loadStudents();
+    loadStatistics();
+}
+
+function editStudent(id) {
+    // Get student data and populate modal
+    $.ajax({
+        url: 'admin/core/get_student.php',
+        type: 'POST',
+        data: { id: id },
+        xhrFields: {
+            withCredentials: true
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        },
+        success: function(response) {
+            const student = JSON.parse(response);
+            
+            $('#fname').val(student.fname);
+            $('#mname').val(student.mname);
+            $('#lname').val(student.lname);
+            $('#gender').val(student.gender);
+            $('#email').val(student.email);
+            $('#class').val(student.class);
+            $('#photo').val(student.display_image);
+            $('#id').val(student.id);
+            
+            $('#class').trigger('change');
+            $('#editModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            if (xhr.status === 401 || xhr.status === 403) {
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+            } else {
+                alert('Error loading student data');
+            }
+        }
+    });
+}
+
+function viewStudent(id) {
+    $.ajax({
+        url: 'admin/core/get_student.php',
+        type: 'POST',
+        data: { id: id },
+        xhrFields: {
+            withCredentials: true
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        },
+        success: function(response) {
+            const student = JSON.parse(response);
+            
+            $('#viewName').text(student.fname + ' ' + student.mname + ' ' + student.lname);
+            $('#viewId').text(student.id);
+            $('#viewEmail').text(student.email);
+            $('#viewGender').text(student.gender);
+            $('#viewClass').text(student.class_name);
+            $('#viewStatus').text(student.status == 1 ? 'Active' : 'Inactive');
+            $('#viewDate').text(student.registration_date || 'N/A');
+            
+            // Set photo
+            if (student.display_image && student.display_image !== 'DEFAULT') {
+                $('#viewPhoto').attr('src', 'images/students/' + student.display_image);
+            } else {
+                $('#viewPhoto').attr('src', 'images/students/' + student.gender.toLowerCase() + '.png');
+            }
+            
+            $('#viewModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            if (xhr.status === 401 || xhr.status === 403) {
+                alert('Session expired. Please refresh the page and try again.');
+                window.location.reload();
+            } else {
+                alert('Error loading student data');
+            }
+        }
+    });
+}
+
+function deleteStudent(id) {
+    if (confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+        $.ajax({
+            url: 'admin/core/drop_student.php',
+            type: 'POST',
+            data: { id: id },
+            success: function(response) {
+                if (response.includes('success')) {
+                    loadStudents();
+                    loadStatistics();
+                    alert('Student deleted successfully');
+                } else {
+                    alert('Error deleting student');
+                }
+            },
+            error: function() {
+                alert('Error deleting student');
+            }
+        });
+    }
+}
+
+function editStudentFromView() {
+    $('#viewModal').modal('hide');
+    setTimeout(function() {
+        $('#editModal').modal('show');
+    }, 500);
+}
 </script>
-</body>
 
-</html>
+<style>
+.stats-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.stats-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.stats-content h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+}
+
+.stats-content p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.app-title-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.student-photo-container {
+    margin-bottom: 20px;
+}
+
+.student-details h4 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.student-details p {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.student-details strong {
+    color: #333;
+}
+
+.table th {
+    background-color: #343a40;
+    color: white;
+    border-color: #454d55;
+}
+
+.avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Pagination Styles */
+.pagination-info {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.pagination .page-link:hover {
+    color: #0056b3;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.pagination .page-item.active .page-link:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: white;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .pagination-info {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .pagination {
+        justify-content: center !important;
+    }
+    
+    .pagination .page-link {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Loading state */
+.table-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<?php include('admin-footer.php'); ?>

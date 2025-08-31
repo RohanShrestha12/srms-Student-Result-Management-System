@@ -2,6 +2,23 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
+require_once('const/check_session.php');
+
+// Check if this is an AJAX request
+$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+if ($res == "1" && $level == "0") {
+    // Admin access verified
+} else {
+    if ($isAjax) {
+        http_response_code(401);
+        die("Access denied");
+    } else {
+        header("location:../");
+        exit();
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -17,11 +34,9 @@ $pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
 $status = '1';
 $photo = serialize($_FILES["image"]);
 
-
-
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
 $stmt = $conn->prepare("SELECT id, email FROM tbl_staff WHERE email = ? OR id = ? UNION SELECT id, email FROM tbl_students WHERE email = ? OR id = ?");
 $stmt->execute([$email, $reg_no, $email, $reg_no]);
@@ -29,9 +44,8 @@ $result = $stmt->fetchAll();
 
 if (count($result) > 0) {
 $_SESSION['reply'] = array (array("error",'Email or registration number is used'));
-header("location:../register_students");
+header("location:../register_students.php");
 }else{
-
 
 if($_FILES['image']['name'] == "")  {
 $img = 'DEFAULT';
@@ -60,15 +74,13 @@ $stmt = $conn->prepare("INSERT INTO tbl_students (id, fname, mname, lname, gende
 $stmt->execute([$reg_no, $fname, $mname, $lname, $gender, $email, $class, $pass, $img]);
 
 $_SESSION['reply'] = array (array("success",'Student registered successfully'));
-header("location:../register_students");
+header("location:../register_students.php");
 }
 
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();
 }
-
-
 
 }else{
 header("location:../");

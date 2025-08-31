@@ -6,115 +6,96 @@ require_once('const/school.php');
 require_once('const/check_session.php');
 if ($res == "1" && $level == "1") {}else{header("location:../");}
 
+// Initialize variables
+$tit = 'Student Results';
+$page_title = 'Student Results';
+$std_data = [];
+$term_data = [];
+$class_data = [];
+
 if (isset($_SESSION['student_result'])) {
 $std = $_SESSION['student_result']['student'];
 $term = $_SESSION['student_result']['term'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// $conn is already available from school.php
+// No need to create a new connection
 
 $stmt = $conn->prepare("SELECT * FROM tbl_students WHERE id = ?");
 $stmt->execute([$std]);
 $std_data = $stmt->fetchAll();
 
+if (empty($std_data)) {
+    throw new Exception("Student not found");
+}
+
 $stmt = $conn->prepare("SELECT * FROM tbl_terms WHERE id = ?");
 $stmt->execute([$term]);
 $term_data = $stmt->fetchAll();
+
+if (empty($term_data)) {
+    throw new Exception("Term not found");
+}
 
 $stmt = $conn->prepare("SELECT * FROM tbl_classes WHERE id = ?");
 $stmt->execute([$std_data[0][6]]);
 $class_data = $stmt->fetchAll();
 
+if (empty($class_data)) {
+    throw new Exception("Class not found");
+}
+
 $tit = ''.$std_data[0][1].' '.$std_data[0][2].' '.$std_data[0][3].' ('.$term_data[0][1].' Results)';
+
+// Set page title for header
+$page_title = $tit;
+
 }catch(PDOException $e)
 {
-echo "Connection failed: " . $e->getMessage();
+$error_message = "Database connection failed: " . $e->getMessage();
+$tit = 'Error - Database Connection Failed';
+$page_title = 'Error';
+}catch(Exception $e) {
+$error_message = "Error: " . $e->getMessage();
+$tit = 'Error - ' . $e->getMessage();
+$page_title = 'Error';
 }
 
 }else{
 header("location:./");
+exit();
 }
+
+// Include the academic header
+require_once('academic/academic-header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<head>
-<title>SRMS - <?php echo $tit ?></title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<base href="../">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<link rel="icon" href="images/icon.ico">
-<link rel="stylesheet" type="text/css" href="cdn.jsdelivr.net/npm/bootstrap-icons%401.10.5/font/bootstrap-icons.css">
-<link rel="stylesheet" href="cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css">
-<link type="text/css" rel="stylesheet" href="loader/waitMe.css">
-<link rel="stylesheet" href="select2/dist/css/select2.min.css">
-</head>
-<body class="app sidebar-mini">
 
-<header class="app-header"><a class="app-header__logo" href="javascript:void(0);">SRMS</a>
-<a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
-
-<ul class="app-nav">
-
-<li class="dropdown"><a class="app-nav__item" href="#" data-bs-toggle="dropdown" aria-label="Open Profile Menu"><i class="bi bi-person fs-4"></i></a>
-<ul class="dropdown-menu settings-menu dropdown-menu-right">
-<li><a class="dropdown-item" href="academic/profile"><i class="bi bi-person me-2 fs-5"></i> Profile</a></li>
-<li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2 fs-5"></i> Logout</a></li>
-</ul>
-</li>
-</ul>
-</header>
-
-<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-<aside class="app-sidebar">
-<div class="app-sidebar__user">
-<div>
-<p class="app-sidebar__user-name"><?php echo $fname.' '.$lname; ?></p>
-<p class="app-sidebar__user-designation">Academic</p>
+<?php if (isset($error_message)): ?>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error!</strong> <?php echo htmlspecialchars($error_message); ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
+<?php endif; ?>
+
+<?php if (empty($std_data) || empty($term_data) || empty($class_data)): ?>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Warning!</strong> Required data is missing. Please check your session and try again.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-<ul class="app-menu">
-<li><a class="app-menu__item" href="academic"><i class="app-menu__icon feather icon-monitor"></i><span class="app-menu__label">Dashboard</span></a></li>
-<li><a class="app-menu__item" href="academic/terms"><i class="app-menu__icon feather icon-folder"></i><span class="app-menu__label">Academic Terms</span></a></li>
+<?php else: ?>
 
-<li><a class="app-menu__item" href="academic/classes"><i class="app-menu__icon feather icon-home"></i><span class="app-menu__label">Classes</span></a></li>
-<li><a class="app-menu__item" href="academic/subjects"><i class="app-menu__icon feather icon-book"></i><span class="app-menu__label">Subjects</span></a></li>
-<li><a class="app-menu__item" href="academic/combinations"><i class="app-menu__icon feather icon-book-open"></i><span class="app-menu__label">Subject Combinations</span></a></li>
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-users"></i><span class="app-menu__label">Students</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-<li><a class="treeview-item" href="academic/promote_students"><i class="icon bi bi-circle-fill"></i> Promote Students</a></li>
-</ul>
-</li>
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-file-text"></i><span class="app-menu__label">Examination Results</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-
-<li><a class="treeview-item" href="academic/manage_results"><i class="icon bi bi-circle-fill"></i> Manage Results</a></li>
-<li><a class="treeview-item" href="academic/individual_results"><i class="icon bi bi-circle-fill"></i> Individual Results</a></li>
-</ul>
-</li>
-<li><a class="app-menu__item" href="academic/report"><i class="app-menu__icon feather icon-bar-chart-2"></i><span class="app-menu__label">Report Tool</span></a></li>
-<li><a class="app-menu__item" href="academic/grading-system"><i class="app-menu__icon feather icon-award"></i><span class="app-menu__label">Grading System</span></a></li>
-<li><a class="app-menu__item" href="academic/division-system"><i class="app-menu__icon feather icon-layers"></i><span class="app-menu__label">Division System</span></a></li>
-<li><a class="app-menu__item" href="academic/announcement"><i class="app-menu__icon feather icon-bell"></i><span class="app-menu__label">Announcements</span></a></li>
-</ul>
-</aside>
-<main class="app-content">
 <div class="app-title">
 <div>
-<h1><?php echo $tit ?></h1>
+<h1><?php echo htmlspecialchars($tit); ?></h1>
 </div>
 </div>
-
 
 <div class="row">
 <div class="col-md-12 ">
 <div class="tile">
 <div class="tile-body">
 
-<form enctype="multipart/form-data" action="academic/core/update_results" class="app_frm row" method="POST" autocomplete="OFF">
+<form enctype="multipart/form-data" action="academic/core/update_results.php" class="app_frm row" method="POST" autocomplete="OFF">
 
 <?php
 $tscore = 0;
@@ -142,8 +123,19 @@ $tscore = $tscore + $score;
 ?>
 
 <div class="mb-3 col-md-2">
-<label class="form-label"><?php echo $row[6]; ?></label>
-<input value="<?php echo $score; ?>" name="<?php echo $row[0];?>" class="form-control" required type="number" placeholder="Enter score">
+<label class="form-label"><?php echo htmlspecialchars($row[6]); ?></label>
+<input value="<?php echo htmlspecialchars($score); ?>" 
+       name="<?php echo htmlspecialchars($row[0]);?>" 
+       class="form-control score-input" 
+       required 
+       type="number" 
+       min="0" 
+       max="100" 
+       step="0.01"
+       placeholder="Enter score (0-100)"
+       oninput="validateScore(this)"
+       onblur="validateScore(this)">
+<div class="invalid-feedback score-error"></div>
 </div>
 
 <?php
@@ -153,41 +145,150 @@ $tscore = $tscore + $score;
 }
 
 ?>
-<input type="hidden" name="student" value="<?php echo $std; ?>">
-<input type="hidden" name="term" value="<?php echo $term; ?>">
-<input type="hidden" name="class" value="<?php echo $std_data[0][6]; ?>">
+<input type="hidden" name="student" value="<?php echo htmlspecialchars($std); ?>">
+<input type="hidden" name="term" value="<?php echo htmlspecialchars($term); ?>">
+<input type="hidden" name="class" value="<?php echo htmlspecialchars($std_data[0][6]); ?>">
 <div class="">
 <button class="btn btn-primary app_btn" type="submit">Save Results</button>
 <?php if ($tscore > 0) {
-?><a onclick="del('academic/core/drop_results?src=single_results&std=<?php echo $std; ?>&class=<?php echo $std_data[0][6]; ?>&term=<?php echo $term; ?>', 'Delete Results?');" href="javascript:void(0);" class="btn btn-danger">Delete</a><?php
+?><a onclick="del('academic/core/drop_results?src=single_results&std=<?php echo htmlspecialchars($std); ?>&class=<?php echo htmlspecialchars($std_data[0][6]); ?>&term=<?php echo htmlspecialchars($term); ?>', 'Delete Results?');" href="javascript:void(0);" class="btn btn-danger">Delete</a><?php
 }
 ?>
 </div>
 </form>
 
-
-</div>
 </div>
 </div>
 </div>
 </div>
 
-</main>
+<?php endif; ?>
 
-<script src="js/jquery-3.7.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
-<script src="loader/waitMe.js"></script>
-<script src="js/sweetalert2@11.js"></script>
-<script src="js/forms.js"></script>
-<script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.html"></script>
-<script type="text/javascript">$('#srmsTable').DataTable({"sort" : false});</script>
-<script src="select2/dist/js/select2.full.min.js"></script>
-<?php require_once('const/check-reply.php'); ?>
+<style>
+/* Score input validation styling */
+.score-input.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.score-input.is-valid {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.score-error {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+/* Enhanced form styling */
+.app_frm .score-input:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+    .col-md-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+</style>
+
 <script>
-$('.select2').select2()
-</script>
-</body>
+// Score validation function
+function validateScore(input) {
+    const score = parseFloat(input.value);
+    const errorDiv = input.parentNode.querySelector('.score-error');
+    
+    // Clear previous errors
+    input.classList.remove('is-invalid');
+    errorDiv.textContent = '';
+    
+    // Check if empty
+    if (input.value === '') {
+        return true;
+    }
+    
+    // Check if it's a valid number
+    if (isNaN(score)) {
+        input.classList.add('is-invalid');
+        errorDiv.textContent = 'Please enter a valid number';
+        return false;
+    }
+    
+    // Check range (0-100)
+    if (score < 0 || score > 100) {
+        input.classList.add('is-invalid');
+        errorDiv.textContent = 'Score must be between 0 and 100';
+        return false;
+    }
+    
+    // Check decimal places (max 2)
+    if (input.value.includes('.') && input.value.split('.')[1].length > 2) {
+        input.classList.add('is-invalid');
+        errorDiv.textContent = 'Maximum 2 decimal places allowed';
+        return false;
+    }
+    
+    return true;
+}
 
-</html>
+// Form validation before submission
+document.querySelector('.app_frm').addEventListener('submit', function(e) {
+    const scoreInputs = document.querySelectorAll('.score-input');
+    let isValid = true;
+    
+    scoreInputs.forEach(input => {
+        if (!validateScore(input)) {
+            isValid = false;
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        // Show error message
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Please fix the errors before submitting the form.',
+            confirmButtonColor: '#3085d6'
+        });
+        return false;
+    }
+    
+    // Show loading state
+    Swal.fire({
+        title: 'Saving Results...',
+        text: 'Please wait while we save the results.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+});
+
+// Real-time validation on input
+document.addEventListener('DOMContentLoaded', function() {
+    const scoreInputs = document.querySelectorAll('.score-input');
+    
+    scoreInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validateScore(this);
+        });
+        
+        input.addEventListener('blur', function() {
+            validateScore(this);
+        });
+    });
+});
+</script>
+
+<?php
+// Include the academic footer
+require_once('academic/academic-footer.php');
+?>

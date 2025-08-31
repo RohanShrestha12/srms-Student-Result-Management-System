@@ -2,42 +2,25 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
+require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$fname = ucfirst($_POST['fname']);
-$lname = ucfirst($_POST['lname']);
-$email = $_POST['email'];
-$gender = $_POST['gender'];
-$role = '2';
-$id = $_POST['id'];
-$status = $_POST['status'];
-
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
-$stmt = $conn->prepare("SELECT email FROM tbl_staff WHERE email = ? AND id != ? UNION SELECT email FROM tbl_students WHERE email = ? AND id != ?");
-$stmt->execute([$email, $id, $email, $id]);
-$result = $stmt->fetchAll();
+$stmt = $conn->prepare("UPDATE tbl_staff SET fname = ?, lname = ?, email = ?, gender = ?, status = ? WHERE id = ?");
+$stmt->execute([$_POST['fname'], $_POST['lname'], $_POST['email'], $_POST['gender'], $_POST['status'], $_POST['id']]);
 
-if (count($result) > 0) {
-$_SESSION['reply'] = array (array("error",'Email is already added'));
-header("location:../teachers");
-}else{
-
-$stmt = $conn->prepare("UPDATE tbl_staff SET fname=?, lname=?, gender=?, email=?, status=? WHERE id = ?");
-$stmt->execute([$fname, $lname, $gender, $email, $status, $id]);
-
-$_SESSION['reply'] = array (array("success",'Teacher updated successfully'));
-header("location:../teachers");
-}
+$_SESSION['reply'] = array (array("success","Teacher updated"));
+header("location:../teachers.php");
 
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();
 }
-
 
 }else{
 header("location:../");

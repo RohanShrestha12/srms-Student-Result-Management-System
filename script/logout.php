@@ -19,5 +19,5 @@ setcookie("__SRMS__key", "0", time() - 3600, '/');
 {
 echo "Connection failed: " . $e->getMessage();
 }
-header("location:./");
+header("location:./index.php");
 ?>

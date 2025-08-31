@@ -6,7 +6,7 @@ require_once('db/config.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $_SESSION['bulk_result_2'] = $_POST;
-header("location:../save_report");
+header("location:../save_report.php");
 
 }else{
 header("location:../");

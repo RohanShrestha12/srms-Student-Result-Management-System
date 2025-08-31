@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -11,8 +12,6 @@ $class = $_POST['class'];
 
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 foreach ($_POST as $key => $value) {
 if ($key !== "student" AND $key !== "term" AND $key !== "class") {
@@ -37,7 +36,7 @@ $stmt->execute([$score, $reg_no, $class, $subject, $term]);
 }
 
 $_SESSION['reply'] = array (array("success",'Results updated successfully'));
-header("location:../single_results");
+header("location:../single_results.php");
 
 }catch(PDOException $e)
 {

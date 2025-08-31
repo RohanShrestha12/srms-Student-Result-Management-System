@@ -18,7 +18,7 @@ $stmt = $conn->prepare("UPDATE tbl_staff SET password = ? WHERE id = ?");
 $stmt->execute([$npassword, $account_id]);
 
 $_SESSION['reply'] = array (array("success", "Password updated"));
-header("location:../profile");
+header("location:../profile.php");
 
 }catch(PDOException $e)
 {
@@ -27,7 +27,7 @@ echo "Connection failed: " . $e->getMessage();
 
 }else{
 $_SESSION['reply'] = array (array("warning", "Current password is not correct"));
-header("location:../profile");
+header("location:../profile.php");
 }
 }else{
 header("location:../");

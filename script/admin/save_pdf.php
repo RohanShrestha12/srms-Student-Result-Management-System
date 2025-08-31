@@ -13,8 +13,8 @@ $term = $_GET['term'];
 $std = $_GET['std'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
 $stmt = $conn->prepare("SELECT * FROM tbl_students WHERE id = ?");
 $stmt->execute([$std]);

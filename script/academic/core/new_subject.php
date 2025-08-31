@@ -2,15 +2,13 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $name = ucfirst($_POST['name']);
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 
 $stmt = $conn->prepare("SELECT * FROM tbl_subjects WHERE name = ?");
 $stmt->execute([$name]);
@@ -21,12 +19,12 @@ $stmt = $conn->prepare("INSERT INTO tbl_subjects (name) VALUES (?)");
 $stmt->execute([$name]);
 
 $_SESSION['reply'] = array (array("success",'Subject registered successfully'));
-header("location:../subjects");
+header("location:../subjects.php");
 
 }else{
 
 $_SESSION['reply'] = array (array("danger",'Subject is already registered'));
-header("location:../subjects");
+header("location:../subjects.php");
 
 }
 

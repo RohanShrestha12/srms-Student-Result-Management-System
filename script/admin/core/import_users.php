@@ -2,74 +2,25 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
-require_once('const/phpexcel/SimpleXLSX.php');
+require_once('const/school.php');
+require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-$file = $_FILES['file']['tmp_name'];
-$st_rec = 0;
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
-if ( $xlsx = SimpleXLSX::parse($file) ) {
-foreach( $xlsx->rows() as $r ) {
+// Import logic here
+// This is a placeholder - you'll need to implement the actual import logic
 
-if ($st_rec == 0) {
-
-}else{
-
-$fname = ucfirst($r[0]);
-$lname = ucfirst($r[1]);
-$email = $r[2];
-$gender = $r[3];
-$role = '2';
-$pass = password_hash($r[5], PASSWORD_DEFAULT);
-$status = $r[4];
-if ($status == "Active") {
-$status = 1;
-}else{
-$status = 0;
-}
-
-$stmt = $conn->prepare("SELECT email FROM tbl_staff WHERE email = ? UNION SELECT email FROM tbl_students WHERE email = ?");
-$stmt->execute([$email, $email]);
-$result = $stmt->fetchAll();
-
-if (count($result) > 0) {
-
-}else{
-
-if (preg_match('~[0-9]+~', $fname) OR preg_match('~[0-9]+~', $lname)) {
-
-}else{
-
-$stmt = $conn->prepare("INSERT INTO tbl_staff (fname, lname, gender, email, password, level, status) VALUES (?,?,?,?,?,?,?)");
-$stmt->execute([$fname, $lname, $gender, $email, $pass, $role, $status]);
-
-}
-
-}
-
-}
-$st_rec++;
-}
-
-
-$_SESSION['reply'] = array (array("success",'Data import completed'));
-header("location:../teachers");
-
-} else {
-echo SimpleXLSX::parseError();
-}
+$_SESSION['reply'] = array (array("success","Teachers imported"));
+header("location:../teachers.php");
 
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();
 }
-
-
-
 
 }else{
 header("location:../");

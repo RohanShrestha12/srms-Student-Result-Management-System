@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -12,14 +13,12 @@ $post_date = date('Y-m-d G:i:s');
 $level = $_POST['audience'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $stmt = $conn->prepare("INSERT INTO tbl_announcements (title, announcement, create_date, level) VALUES (?,?,?,?)");
 $stmt->execute([$title, $announcement, $post_date, $level]);
 
 $_SESSION['reply'] = array (array("success",'Announcement created successfully'));
-header("location:../announcement");
+header("location:../announcement.php");
 
 }catch(PDOException $e)
 {

@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -13,27 +14,25 @@ $remark = ucwords($_POST['remark']);
 
 if ($min > 100 OR $max > 100) {
 $_SESSION['reply'] = array (array("danger","Minimum and Maximum percentage must be less or equal to 100%"));
-header("location:../grading-system");
+header("location:../grading-system.php");
 }else{
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$stmt = $conn->prepare("SELECT * FROM tbl_grade_system WHERE name = ? OR min = ? AND max = ?");
+$stmt = $conn->prepare("SELECT * FROM tbl_grade_system WHERE name = ? OR (min = ? AND max = ?)");
 $stmt->execute([$grade_name, $min, $max]);
 $result = $stmt->fetchAll();
 
 if (count($result) > 0) {
 $_SESSION['reply'] = array (array("warning","Grade is already registered"));
-header("location:../grading-system");
+header("location:../grading-system.php");
 }else{
 
 $stmt = $conn->prepare("INSERT INTO tbl_grade_system (name, min, max, remark) VALUES (?,?,?,?)");
 $stmt->execute([$grade_name, $min, $max, $remark]);
 
 $_SESSION['reply'] = array (array("success","Grade registered successfully"));
-header("location:../grading-system");
+header("location:../grading-system.php");
 
 }
 

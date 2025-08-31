@@ -11,7 +11,7 @@ $_password = $_POST['password'];
 $cookie_length = "4320";
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
+$conn = new PDO('mysql:host='.DBHost.';port='.DBPort.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $stmt = $conn->prepare("SELECT id, email, password, level, status FROM tbl_staff WHERE id = ? OR email = ?
@@ -51,19 +51,19 @@ setcookie("__SRMS__key", $session_id, time() + (60 * $cookie_length), "/");
 
 switch ($row[3]) {
 case '0':
-header("location:../admin");
+header("location:../admin/index.php");
 break;
 
 case '1':
-header("location:../academic");
+header("location:../academic/index.php");
 break;
 
 case '2':
-header("location:../teacher");
+header("location:../teacher/index.php");
 break;
 
 case '3':
-header("location:../student");
+header("location:../student/index.php");
 break;
 }
 

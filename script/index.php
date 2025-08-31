@@ -22,7 +22,7 @@ require_once('const/school.php');
 
 <div class="login-box">
 
-<form class="login-form app_frm" action="core/auth" autocomplete="OFF" method="POST">
+<form class="login-form app_frm" action="core/auth.php" autocomplete="OFF" method="POST">
 <center><img height="140" src="images/logo/<?php echo WBLogo; ?>"></center>
 <h4 class="login-head"><?php echo WBName; ?></h4>
 <p class="text-center">STUDENTS RESULTS MANAGEMENT SYSTEM</p>
@@ -44,7 +44,7 @@ require_once('const/school.php');
 </div>
 </form>
 
-<form class="forget-form app_frm" action="core/forgot_pw" method="POST" autocomplete="OFF">
+<form class="forget-form app_frm" action="core/forgot_pw.php" method="POST" autocomplete="OFF">
 <center><img height="140" src="images/logo/<?php echo WBLogo; ?>"></center>
 <h4 class="login-head"><?php echo WBName; ?></h4>
 <p class="text-center">STUDENTS RESULTS MANAGEMENT SYSTEM</p>

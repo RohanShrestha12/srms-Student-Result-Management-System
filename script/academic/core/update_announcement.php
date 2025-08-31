@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -13,14 +14,12 @@ $level = $_POST['audience'];
 $id = $_POST['id'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $stmt = $conn->prepare("UPDATE tbl_announcements SET title=?, announcement=?, level=? WHERE id = ?");
 $stmt->execute([$title, $announcement, $level, $id]);
 
 $_SESSION['reply'] = array (array("success",'Announcement updated successfully'));
-header("location:../announcement");
+header("location:../announcement.php");
 
 }catch(PDOException $e)
 {

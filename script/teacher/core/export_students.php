@@ -2,54 +2,79 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
+require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-$class = $_POST['class'];
+    $class = $_POST['class'];
 
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    try {
+        // Use the centralized connection from school.php
+        if (!isset($conn) || $conn === null) {
+            throw new Exception("Database connection not available");
+        }
 
-$stmt = $conn->prepare("SELECT * FROM tbl_classes WHERE id = ?");
-$stmt->execute([$class]);
-$result = $stmt->fetchAll();
+        $stmt = $conn->prepare("SELECT * FROM tbl_classes WHERE id = ?");
+        $stmt->execute([$class]);
+        $result = $stmt->fetchAll();
 
+        if (count($result) < 1) {
+            throw new Exception("Class not found");
+        }
 
-$fileName = $result[0][1].'.csv';
-$_SESSION['export_file'] = $fileName;
+        $fileName = $result[0][1] . '.csv';
+        $_SESSION['export_file'] = $fileName;
 
-if (file_exists('import_sheets/'.$fileName)) {
-unlink('import_sheets/'.$fileName);
-}
+        // Create import_sheets directory if it doesn't exist
+        $directory = 'import_sheets';
+        if (!is_dir($directory)) {
+            if (!mkdir($directory, 0755, true)) {
+                throw new Exception("Failed to create directory: $directory");
+            }
+        }
 
-$fp = fopen('import_sheets/'.$fileName, 'w');
+        $filePath = $directory . '/' . $fileName;
 
-$rowData = array('REGISTRATION NUMBER', 'STUDENT NAME', 'SCORE');
-fputcsv($fp, $rowData);
+        // Remove existing file if it exists
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
 
+        // Open file for writing
+        $fp = fopen($filePath, 'w');
+        if ($fp === false) {
+            throw new Exception("Failed to open file for writing: $filePath");
+        }
 
-$stmt = $conn->prepare("SELECT * FROM tbl_students WHERE class = ?");
-$stmt->execute([$class]);
-$result = $stmt->fetchAll();
+        // Write CSV header
+        $rowData = array('REGISTRATION NUMBER', 'STUDENT NAME', 'SCORE');
+        fputcsv($fp, $rowData);
 
-foreach($result as $row)
-{
+        // Get students for the selected class
+        $stmt = $conn->prepare("SELECT * FROM tbl_students WHERE class = ?");
+        $stmt->execute([$class]);
+        $result = $stmt->fetchAll();
 
-$rowData = array($row[0], ''.$row[1].' '.$row[2].' '.$row[3].'', "0");
-fputcsv($fp, $rowData);
+        // Write student data
+        foreach ($result as $row) {
+            $studentName = $row[1] . ' ' . $row[2] . ' ' . $row[3];
+            $rowData = array($row[0], $studentName, "0");
+            fputcsv($fp, $rowData);
+        }
 
-}
+        // Close file
+        fclose($fp);
 
+        // Set success message
+        $_SESSION['reply'] = array(array("success", "Student list exported successfully to $fileName"));
+        header("location:../export_students.php");
 
+    } catch (Exception $e) {
+        $_SESSION['reply'] = array(array("error", "Export failed: " . $e->getMessage()));
+        header("location:../export_students.php");
+    }
 
-header("location:../export_students");
-
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-
-}else{
-header("location:../");
+} else {
+    header("location:../");
 }
 ?>

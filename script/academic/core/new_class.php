@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -9,9 +10,6 @@ $name = ucfirst($_POST['name']);
 $reg_date = date('Y-m-d G:i:s');
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 
 $stmt = $conn->prepare("SELECT * FROM tbl_classes WHERE name = ?");
 $stmt->execute([$name]);
@@ -22,12 +20,12 @@ $stmt = $conn->prepare("INSERT INTO tbl_classes (name, registration_date) VALUES
 $stmt->execute([$name, $reg_date]);
 
 $_SESSION['reply'] = array (array("success",'Class registered successfully'));
-header("location:../classes");
+header("location:../classes.php");
 
 }else{
 
 $_SESSION['reply'] = array (array("danger",'Class is already registered'));
-header("location:../classes");
+header("location:../classes.php");
 
 }
 

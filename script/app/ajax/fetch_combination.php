@@ -2,15 +2,13 @@
 session_start();
 chdir('../../');
 require_once('db/config.php');
+require_once('db/connection.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $id = $_POST['id'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 $stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations WHERE id = ?");
 $stmt->execute([$id]);
 $result = $stmt->fetchAll();
@@ -20,7 +18,7 @@ foreach($result as $rowx)
 $cls = unserialize($rowx[1]);
 ?>
 
-<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/update_comb">
+<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/update_comb.php">
 
 
 <div class="mb-2">
@@ -29,9 +27,6 @@ $cls = unserialize($rowx[1]);
 <option selected disabled value="">Select one</option>
 <?php
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 $stmt = $conn->prepare("SELECT * FROM tbl_subjects ORDER BY name");
 $stmt->execute();
 $result = $stmt->fetchAll();
@@ -57,9 +52,6 @@ echo "Connection failed: " . $e->getMessage();
 <select multiple="true" class="form-control select3" name="class[]" required style="width: 100%;">
 <?php
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 $stmt = $conn->prepare("SELECT * FROM tbl_classes");
 $stmt->execute();
 $result = $stmt->fetchAll();
@@ -94,9 +86,6 @@ echo "Connection failed: " . $e->getMessage();
 <option selected disabled value="">Select one</option>
 <?php
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 $stmt = $conn->prepare("SELECT * FROM tbl_staff WHERE level = '2'");
 $stmt->execute();
 $result = $stmt->fetchAll();

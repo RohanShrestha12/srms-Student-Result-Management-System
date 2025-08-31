@@ -1,0 +1,143 @@
+/* Modern Admin Header Styles */
+.app-header {
+    background: #22304a !important; /* Deep blue */
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(34, 48, 74, 0.08);
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    z-index: 1050;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.app-header__logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-right: 32px;
+}
+
+.app-header__logo .school-logo {
+    height: 40px;
+    width: auto;
+    max-width: 180px;
+    margin-right: 12px;
+}
+
+.header-left, .header-center, .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    flex: 1 1 auto;
+}
+.header-center {
+    flex: 2 1 auto;
+    justify-content: center;
+}
+.header-right {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+}
+
+.app-header__toggle {
+    color: #fff;
+    font-size: 2rem;
+    margin-right: 24px;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.app-header__toggle:hover {
+    color: #ffc107;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: #fff;
+}
+.user-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+.user-role {
+    font-size: 0.9rem;
+    color: #b0c4de;
+}
+.user-greeting {
+    font-size: 0.8rem;
+    color: #b0c4de;
+}
+.user-avatar {
+    color: #fff;
+    font-size: 2rem;
+    margin-left: 12px;
+    transition: color 0.2s;
+}
+.user-avatar:hover {
+    color: #ffc107;
+}
+
+.dropdown-menu.settings-menu {
+    min-width: 200px;
+    background: #22304a;
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 16px rgba(34, 48, 74, 0.15);
+}
+.dropdown-menu.settings-menu .dropdown-item {
+    color: #fff;
+    font-size: 1rem;
+    padding: 12px 20px;
+    transition: background 0.2s, color 0.2s;
+}
+.dropdown-menu.settings-menu .dropdown-item:hover {
+    background: #1a2336;
+    color: #ffc107;
+}
+
+.app-sidebar__toggle {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-right: 24px;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: none; /* Hidden by default on large screens */
+}
+.app-sidebar__toggle:hover {
+    color: #ffc107;
+}
+
+/* Show hamburger menu only on small screens */
+@media (max-width: 991px) {
+    .app-sidebar__toggle {
+        display: block;
+    }
+    
+    .app-header {
+        padding: 0 12px;
+    }
+    .header-center {
+        display: none;
+    }
+}

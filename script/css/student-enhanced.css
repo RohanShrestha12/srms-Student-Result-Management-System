@@ -1,0 +1,490 @@
+/* Student Enhanced Header Styles */
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+/* Header Layout Sections */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  max-width: 500px;
+  margin: 0 20px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Logo Styling */
+.app-header__logo {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 0px;
+  border-radius: 6px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.app-header__logo:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.app-header__logo h2 {
+  background: linear-gradient(45deg, #ffffff, #f8f9fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 22px;
+  text-shadow: none;
+  margin: 0;
+}
+
+.school-logo {
+  max-height: 40px;
+  max-width: 120px;
+  object-fit: contain;
+  filter: brightness(1.1) contrast(1.1);
+  transition: all 0.3s ease;
+}
+
+.school-logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2) contrast(1.2);
+}
+
+/* Sidebar Toggle Button */
+.app-sidebar__toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.app-sidebar__toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-sidebar__toggle:active {
+  transform: translateY(0);
+}
+
+/* Search Container and Box */
+.search-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 8px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.search-box:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-box:focus-within {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.search-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  margin-right: 10px;
+  transition: color 0.3s ease;
+}
+
+.search-box:focus-within .search-icon {
+  color: #ffffff;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  padding: 5px 0;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.search-btn {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.search-btn:hover {
+  background: linear-gradient(45deg, #5a6fd8, #6a4190);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-btn:active {
+  transform: translateY(0);
+}
+
+/* User Section */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.user-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+.user-greeting {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.user-avatar {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 24px;
+  padding: 8px;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+.user-avatar:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  margin-top: 5px;
+  min-width: 180px;
+  backdrop-filter: blur(15px);
+}
+
+.dropdown-item {
+  color: #333333;
+  padding: 10px 16px;
+  font-size: 14px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  margin: 2px 8px;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateX(3px);
+}
+
+.dropdown-item i {
+  margin-right: 8px;
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+}
+
+.dropdown-divider {
+  margin: 8px 0;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar overlay styles */
+.app-sidebar__overlay {
+  background: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.3s ease;
+  z-index: 999;
+  backdrop-filter: blur(5px);
+}
+
+/* Student-specific sidebar enhancements - only override specific properties */
+.app-sidebar__user {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.app-sidebar__user:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.app-sidebar__user-name {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.app-sidebar__user-designation {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.user-status {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  font-style: italic;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  backdrop-filter: blur(5px);
+  margin-top: 5px;
+}
+
+/* Fix for raw HTML display in announcements */
+.announcement-content p {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.announcement-content {
+  color: #666;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Dashboard title styling */
+.app-title h1 {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.app-title p {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Widget styling improvements */
+.dashboard-widget {
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.dashboard-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.widget-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+}
+
+.widget-header h5 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.widget-content {
+  padding: 20px;
+  background: white;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 15px;
+    height: 55px;
+  }
+
+  .app-header__logo {
+    font-size: 18px;
+    padding: 6px 10px;
+  }
+
+  .app-header__logo h2 {
+    font-size: 20px;
+  }
+
+  .app-sidebar__toggle {
+    display: flex;
+    padding: 6px 10px;
+    font-size: 18px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .header-center {
+    display: none;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .user-greeting {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 10px;
+  }
+
+  .app-header__logo {
+    font-size: 16px;
+  }
+
+  .app-header__logo h2 {
+    font-size: 18px;
+  }
+
+  .app-sidebar__toggle {
+    font-size: 16px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+
+/* Animation for header appearance */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-header {
+  animation: fadeInDown 0.5s ease-out;
+}
+
+/* Focus states for accessibility */
+.app-sidebar__toggle:focus,
+.search-input:focus,
+.user-avatar:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dropdown-menu {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .dropdown-item {
+    color: #ffffff;
+  }
+  
+  .dropdown-item:hover {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: #ffffff;
+  }
+} 

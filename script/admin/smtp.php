@@ -4,147 +4,159 @@ session_start();
 require_once('db/config.php');
 require_once('const/school.php');
 require_once('const/check_session.php');
+if ($res == "1" && $level == "0") {
+} else {
+    header("location:../");
+}
 
-if ($res == "1" && $level == "0") {}else{header("location:../");}
+// Set page title and include datatables
+$page_title = "SMTP Settings";
+$include_datatables = true;
+
+// Include the admin header
+include('admin-header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<head>
-<title>SRMS - SMTP Settings</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<base href="../">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<link rel="icon" href="images/icon.ico">
-<link rel="stylesheet" type="text/css" href="cdn.jsdelivr.net/npm/bootstrap-icons%401.10.5/font/bootstrap-icons.css">
-<link type="text/css" rel="stylesheet" href="loader/waitMe.css">
-</head>
-<body class="app sidebar-mini">
 
-<header class="app-header"><a class="app-header__logo" href="javascript:void(0);">SRMS</a>
-<a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
-
-<ul class="app-nav">
-
-<li class="dropdown"><a class="app-nav__item" href="#" data-bs-toggle="dropdown" aria-label="Open Profile Menu"><i class="bi bi-person fs-4"></i></a>
-<ul class="dropdown-menu settings-menu dropdown-menu-right">
-<li><a class="dropdown-item" href="admin/profile"><i class="bi bi-person me-2 fs-5"></i> Profile</a></li>
-<li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2 fs-5"></i> Logout</a></li>
-</ul>
-</li>
-</ul>
-</header>
-
-<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-<aside class="app-sidebar">
-<div class="app-sidebar__user">
-<div>
-<p class="app-sidebar__user-name"><?php echo $fname.' '.$lname; ?></p>
-<p class="app-sidebar__user-designation">Administrator</p>
-</div>
-</div>
-<ul class="app-menu">
-<li><a class="app-menu__item" href="admin"><i class="app-menu__icon feather icon-monitor"></i><span class="app-menu__label">Dashboard</span></a></li>
-<li><a class="app-menu__item" href="admin/academic"><i class="app-menu__icon feather icon-user"></i><span class="app-menu__label">Academic Account</span></a></li>
-<li><a class="app-menu__item" href="admin/teachers"><i class="app-menu__icon feather icon-user"></i><span class="app-menu__label">Teachers</span></a></li>
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-users"></i><span class="app-menu__label">Students</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-<li><a class="treeview-item" href="admin/register_students"><i class="icon bi bi-circle-fill"></i> Register Students</a></li>
-<li><a class="treeview-item" href="admin/import_students"><i class="icon bi bi-circle-fill"></i> Import Students</a></li>
-<li><a class="treeview-item" href="admin/manage_students"><i class="icon bi bi-circle-fill"></i> Manage Students</a></li>
-</ul>
-</li>
-<li><a class="app-menu__item" href="admin/report"><i class="app-menu__icon feather icon-bar-chart-2"></i><span class="app-menu__label">Report Tool</span></a></li>
-<li><a class="app-menu__item active" href="admin/smtp"><i class="app-menu__icon feather icon-mail"></i><span class="app-menu__label">SMTP Settings</span></a></li>
-<li><a class="app-menu__item" href="admin/system"><i class="app-menu__icon feather icon-settings"></i><span class="app-menu__label">System Settings</span></a></li>
-</ul>
-</aside>
-
-
-<main class="app-content">
 <div class="app-title">
-<div>
-<h1>SMTP Settings</h1>
+    <div>
+        <h1><i class="bi bi-envelope me-2"></i>SMTP Settings</h1>
+        <p>Configure email server settings for the system</p>
+    </div>
 </div>
 
-</div>
 <div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="tile">
+            <div class="tile-body">
+                <div class="text-center mb-4">
+                    <div class="smtp-header">
+                        <i class="bi bi-gear display-1 text-warning mb-3"></i>
+                        <h3 class="tile-title">Email Server Configuration</h3>
+                        <p class="text-muted">Configure SMTP settings for sending emails from the system</p>
+                    </div>
+                </div>
+                
+                <form class="app_frm" method="POST" autocomplete="OFF" action="admin/core/update_smtp.php">
+                    <?php
+                    try {
+                        // Use the connection from school.php instead of creating a new one
+                        // $conn is already available from school.php
 
+                        $stmt = $conn->prepare("SELECT * FROM tbl_smtp");
+                        $stmt->execute();
+                        $result = $stmt->fetchAll();
 
-<div class="tile">
-<div class="tile-body">
-<form class="app_frm" method="POST" autocomplete="OFF" action="admin/core/update_smtp">
-<?php
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        if (count($result) > 0) {
+                            foreach($result as $row) {
+                    ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-server me-1"></i>SMTP Server
+                                    </label>
+                                    <input required type="text" name="mail_server" value="<?php echo htmlspecialchars($row[1]); ?>" class="form-control form-control-lg" placeholder="e.g., smtp.gmail.com">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-person me-1"></i>SMTP Username
+                                    </label>
+                                    <input required type="text" name="mail_username" value="<?php echo htmlspecialchars($row[2]); ?>" class="form-control form-control-lg" placeholder="e.g., your-email@gmail.com">
+                                </div>
+                            </div>
+                        </div>
 
-$stmt = $conn->prepare("SELECT * FROM tbl_smtp");
-$stmt->execute();
-$result = $stmt->fetchAll();
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-lock me-1"></i>SMTP Password
+                                    </label>
+                                    <div class="input-group">
+                                        <input required type="password" id="mail_password" name="mail_password" value="<?php echo htmlspecialchars($row[3]); ?>" class="form-control form-control-lg" placeholder="Enter SMTP Password">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('mail_password')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-hdd-network me-1"></i>SMTP Port
+                                    </label>
+                                    <input required type="text" name="mail_port" value="<?php echo htmlspecialchars($row[4]); ?>" class="form-control form-control-lg" placeholder="e.g., 587, 465, 25">
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="form-group mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-shield-check me-1"></i>Security Connection
+                            </label>
+                            <select class="form-control form-control-lg" name="mail_security" required>
+                                <option value="" selected disabled>Select Security Type</option>
+                                <option <?php if ($row[5] == "ssl") { print ' selected ';}?> value="ssl">SSL (Secure Socket Layer)</option>
+                                <option <?php if ($row[5] == "tls") { print ' selected ';}?> value="tls">TLS (Transport Layer Security)</option>
+                            </select>
+                        </div>
 
-foreach($result as $row) {
-?>
-<div class="form-group mb-2">
-<label class="control-label">SMTP Server</label>
-<input required type="text" name="mail_server" value="<?php echo $row[1]; ?>" class="form-control" placeholder="Enter SMTP Server">
+                        <div class="alert alert-info">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-info-circle me-3 fs-4"></i>
+                                <div>
+                                    <strong>SMTP Configuration:</strong> 
+                                    These settings are used for sending emails from the system (notifications, reports, etc.).
+                                    <br>
+                                    <small class="text-muted">Common providers: Gmail (587/TLS), Outlook (587/TLS), Yahoo (465/SSL)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" name="submit" value="1" class="btn btn-warning btn-lg">
+                                <i class="bi bi-gear me-2"></i>Update SMTP Settings
+                            </button>
+                        </div>
+                    <?php
+                            }
+                        } else {
+                            echo '<div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>No SMTP Settings Found:</strong> Please contact your administrator to configure SMTP settings.
+                                  </div>';
+                        }
+                    } catch(PDOException $e) {
+                        echo '<div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Database Error:</strong> ' . htmlspecialchars($e->getMessage()) . '
+                              </div>';
+                    }
+                    ?>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="form-group mb-2">
-<label class="control-label">SMTP Username</label>
-<input required type="text" name="mail_username" value="<?php echo $row[2]; ?>"class="form-control" placeholder="Enter SMTP Username">
-</div>
-
-<div class="form-group mb-2">
-<label class="control-label">SMTP Password</label>
-<input required type="text" name="mail_password" value="<?php echo $row[3]; ?>" class="form-control" placeholder="Enter SMTP Password">
-</div>
-
-<div class="form-group mb-2">
-<label class="control-label">SMTP Port</label>
-<input required type="text" name="mail_port" value="<?php echo $row[4]; ?>" class="form-control" placeholder="Enter SMTP Port">
-</div>
-
-<div class="form-group mb-3">
-<label  class="control-label">Security connection</label>
-<select class="form-control" name="mail_security" required>
-<option value="" selected disabled>Select One</option>
-<option <?php if ($row[5] == "ssl") { print ' selected ';}?> value="ssl">SSL</option>
-<option <?php if ($row[5] == "tls") { print ' selected ';}?> value="tls">TLS</option>
-</select>
-</div>
-
-<div class="box-footer">
-<button type="submit" name="submit" value="1" class="btn btn-primary app_btn">Update</button>
-</div>
-</form>
-<?php
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const button = input.nextElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
 }
+</script>
 
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
-}
-?>
-
-
-</div>
-</div>
-</div>
-
-
-</main>
-
-<script src="js/jquery-3.7.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
-<script src="loader/waitMe.js"></script>
-<script src="js/forms.js"></script>
-<script src="js/sweetalert2@11.js"></script>
-<?php require_once('const/check-reply.php'); ?>
-</body>
-
-</html>
+<?php include('admin-footer.php'); ?>

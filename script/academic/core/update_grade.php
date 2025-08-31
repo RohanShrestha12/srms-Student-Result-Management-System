@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -13,27 +14,25 @@ $id = $_POST['id'];
 
 if ($min > 100 OR $max > 100) {
 $_SESSION['reply'] = array (array("danger","Minimum and Maximum percentage must be less or equal to 100%"));
-header("location:../grading-system");
+header("location:../grading-system.php");
 }else{
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$stmt = $conn->prepare("SELECT * FROM tbl_grade_system WHERE name = ? AND id != ? OR min = ? AND max = ? AND id != ?");
+$stmt = $conn->prepare("SELECT * FROM tbl_grade_system WHERE (name = ? AND id != ?) OR (min = ? AND max = ? AND id != ?)");
 $stmt->execute([$grade_name, $id, $min, $max, $id]);
 $result = $stmt->fetchAll();
 
 if (count($result) > 0) {
 $_SESSION['reply'] = array (array("warning","Grade is already registered"));
-header("location:../grading-system");
+header("location:../grading-system.php");
 }else{
 
 $stmt = $conn->prepare("UPDATE tbl_grade_system  SET name=?, min=?, max=?, remark=? WHERE id = ?");
 $stmt->execute([$grade_name, $min, $max,  $remark, $id]);
 
 $_SESSION['reply'] = array (array("success","Grade updated successfully"));
-header("location:../grading-system");
+header("location:../grading-system.php");
 
 }
 

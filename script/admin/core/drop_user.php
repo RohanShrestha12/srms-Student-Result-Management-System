@@ -1,29 +1,26 @@
 <?php
-session_start();
 chdir('../../');
 session_start();
 require_once('db/config.php');
-
+require_once('const/school.php');
+require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-$id = $_GET['id'];
-
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
 $stmt = $conn->prepare("DELETE FROM tbl_staff WHERE id = ?");
-$stmt->execute([$id]);
+$stmt->execute([$_GET['id']]);
 
-$_SESSION['reply'] = array (array("success",'Academic deleted successfully'));
-header("location:../academic");
+$_SESSION['reply'] = array (array("success","Teacher deleted"));
+header("location:../teachers.php");
 
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();
 }
-
 
 }else{
 header("location:../");

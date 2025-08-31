@@ -1,0 +1,248 @@
+/* Admin-specific custom styles to complement main.css */
+
+/* Override main.css app-content styles with maximum specificity */
+html body .app-content,
+body .app-content,
+.app-content {
+    margin-left: 240px !important;
+    margin-top: 64px !important;
+    padding: 32px 24px 24px 24px !important;
+    min-height: calc(100vh - 64px) !important;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+    transition: margin-left 0.3s ease !important;
+    position: relative !important;
+    width: calc(100% - 240px) !important;
+    z-index: 1 !important;
+}
+
+/* Override main.css app-content styles with more specific rules */
+body .app-content {
+    margin-left: 240px !important;
+    margin-top: 64px !important;
+    padding: 32px 24px 24px 24px !important;
+    min-height: calc(100vh - 64px) !important;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+    transition: margin-left 0.3s ease !important;
+    position: relative !important;
+    width: calc(100% - 240px) !important;
+    z-index: 1 !important;
+}
+
+@media (max-width: 1200px) {
+    html body .app-content,
+    body .app-content,
+    .app-content {
+        margin-left: 240px !important;
+        width: calc(100% - 240px) !important;
+    }
+}
+
+@media (max-width: 991px) {
+    html body .app-content,
+    body .app-content,
+    .app-content {
+        margin-left: 220px !important;
+        margin-top: 60px !important;
+        padding: 20px 15px 15px 15px !important;
+        width: calc(100% - 220px) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    html body .app-content,
+    body .app-content,
+    .app-content {
+        margin-left: 0 !important;
+        margin-top: 60px !important;
+        padding: 15px 10px 10px 10px !important;
+        width: 100% !important;
+    }
+}
+
+/* Keep dashboard cards and widgets visually consistent */
+.dashboard-card, .dashboard-widget {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+/* School logo styling */
+.app-header__logo .school-logo {
+    height: 40px;
+    width: auto;
+    max-width: 200px;
+}
+
+/* Dashboard cards styling */
+.dashboard-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card .card-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.dashboard-card.academic-terms .card-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.dashboard-card.teachers .card-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.dashboard-card.students .card-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.dashboard-card.subjects .card-icon {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.dashboard-card .card-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.dashboard-card .card-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.dashboard-card .card-description {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Dashboard widgets */
+.dashboard-widget {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: none;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.widget-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #ecf0f1;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px 15px 0 0;
+}
+
+.widget-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.widget-content {
+    padding: 25px;
+}
+
+/* Quick actions */
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.quick-action-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #495057;
+    transition: all 0.15s ease-in-out;
+}
+
+.quick-action-item:hover {
+    background: #e9ecef;
+    color: #00695C;
+    text-decoration: none;
+}
+
+.quick-action-item i {
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .dashboard-card {
+        margin-bottom: 1rem;
+        padding: 20px;
+    }
+    
+    .quick-actions {
+        gap: 0.5rem;
+    }
+    
+    .quick-action-item {
+        padding: 0.5rem;
+    }
+    
+    .widget-content {
+        padding: 20px;
+    }
+}
+
+/* Animation for dashboard cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-card, .dashboard-widget {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-card:nth-child(4) { animation-delay: 0.4s; } 

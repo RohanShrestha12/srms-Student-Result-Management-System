@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -19,15 +20,12 @@ array_push($arr, $value);
 }
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 
 $stmt = $conn->prepare("UPDATE tbl_subject_combinations SET class=?, subject=?, teacher=? WHERE id = ?");
 $stmt->execute([$class, $subject, $teacher, $id]);
 
 $_SESSION['reply'] = array (array("success",'Subject combination updated successfully'));
-header("location:../combinations");
+header("location:../combinations.php");
 
 
 }catch(PDOException $e)

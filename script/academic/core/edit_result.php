@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 $_SESSION['student_result']['student'] = $_GET['std'];
 $_SESSION['student_result']['term'] = $_GET['term'];
-header("location:../single_results");
+header("location:../single_results.php");
 
 }else{
 header("location:../");

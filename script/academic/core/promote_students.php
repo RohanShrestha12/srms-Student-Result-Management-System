@@ -18,7 +18,7 @@ $stmt = $conn->prepare("UPDATE tbl_students SET class = ? WHERE class = ?");
 $stmt->execute([$class2, $class]);
 
 $_SESSION['reply'] = array (array("success",'Students promoted to next class'));
-header("location:../promote_students");
+header("location:../promote_students.php");
 
 }catch(PDOException $e)
 {

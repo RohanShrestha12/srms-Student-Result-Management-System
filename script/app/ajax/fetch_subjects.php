@@ -2,16 +2,22 @@
 session_start();
 chdir('../../');
 require_once('db/config.php');
+require_once('db/connection.php');
+
+// Now include session check after connection is established
 require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $id = $_POST['id'];
 
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Check if account_id is set
+if (!isset($account_id)) {
+echo '<option disabled>Session expired. Please login again.</option>';
+exit;
+}
 
+try {
 $stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations
   LEFT JOIN tbl_subjects ON tbl_subject_combinations.subject = tbl_subjects.id WHERE tbl_subject_combinations.teacher = ?");
 $stmt->execute([$account_id]);
@@ -31,6 +37,7 @@ else
 }
 
 }
+
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();

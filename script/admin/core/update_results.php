@@ -2,48 +2,48 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
+require_once('const/check_session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$std = $_POST['student'];
-$term = $_POST['term'];
-$class = $_POST['class'];
-
-
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Use the connection from school.php instead of creating a new one
+// $conn is already available from school.php
 
-foreach ($_POST as $key => $value) {
-if ($key !== "student" AND $key !== "term" AND $key !== "class") {
-
-$reg_no = $std;
-$score = $value;
-$subject = $key;
-
-$stmt = $conn->prepare("SELECT * FROM tbl_exam_results WHERE student = ? AND class=? AND subject_combination=? AND term = ?");
-$stmt->execute([$reg_no, $class, $subject, $term]);
+$stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations LEFT JOIN tbl_subjects ON tbl_subject_combinations.subject = tbl_subjects.id");
+$stmt->execute();
 $result = $stmt->fetchAll();
 
-if (count($result) < 1) {
-$stmt = $conn->prepare("INSERT INTO tbl_exam_results (student, class, subject_combination, term, score) VALUES (?,?,?,?,?)");
-$stmt->execute([$reg_no, $class, $subject, $term, $score]);
+foreach ($result as $key => $row) {
+$class_list = unserialize($row[1]);
+
+if (in_array($_POST['class'], $class_list))
+{
+
+$stmt = $conn->prepare("SELECT * FROM tbl_exam_results WHERE class = ? AND subject_combination = ? AND term = ? AND student = ?");
+$stmt->execute([$_POST['class'], $row[0], $_POST['term'], $_POST['student']]);
+$ex_result = $stmt->fetchAll();
+
+if (count($ex_result) > 0) {
+$stmt = $conn->prepare("UPDATE tbl_exam_results SET score = ? WHERE class = ? AND subject_combination = ? AND term = ? AND student = ?");
+$stmt->execute([$_POST[$row[0]], $_POST['class'], $row[0], $_POST['term'], $_POST['student']]);
 }else{
-$stmt = $conn->prepare("UPDATE tbl_exam_results SET score = ? WHERE student = ? AND class=? AND subject_combination=? AND term = ?");
-$stmt->execute([$score, $reg_no, $class, $subject, $term]);
+$stmt = $conn->prepare("INSERT INTO tbl_exam_results (class, subject_combination, term, student, score) VALUES (?, ?, ?, ?, ?)");
+$stmt->execute([$_POST['class'], $row[0], $_POST['term'], $_POST['student'], $_POST[$row[0]]]);
 }
 
 }
+
 }
 
-$_SESSION['reply'] = array (array("success",'Results updated successfully'));
-header("location:../single_results");
+$_SESSION['reply'] = array (array("success","Results updated"));
+header("location:../single_results.php");
 
 }catch(PDOException $e)
 {
 echo "Connection failed: " . $e->getMessage();
 }
-
 
 }else{
 header("location:../");

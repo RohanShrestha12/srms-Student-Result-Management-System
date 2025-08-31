@@ -2,6 +2,7 @@
 chdir('../../');
 session_start();
 require_once('db/config.php');
+require_once('const/school.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -20,8 +21,6 @@ array_push($arr, $value);
 }
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // $stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations WHERE subject = ? AND class IN ($matches)");
 $stmt = $conn->prepare("SELECT * FROM tbl_subject_combinations WHERE subject = ?");
@@ -41,12 +40,12 @@ $stmt = $conn->prepare("INSERT INTO tbl_subject_combinations (class, subject, te
 $stmt->execute([$class, $subject, $teacher, $reg_date]);
 
 $_SESSION['reply'] = array (array("success",'Subject combination created successfully'));
-header("location:../combinations");
+header("location:../combinations.php");
 
 }else{
 
 $_SESSION['reply'] = array (array("danger",'Subject combination is already created'));
-header("location:../combinations");
+header("location:../combinations.php");
 
 }
 

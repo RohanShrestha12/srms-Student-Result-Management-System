@@ -4,209 +4,240 @@ session_start();
 require_once('db/config.php');
 require_once('const/school.php');
 require_once('const/check_session.php');
+require_once('const/academic_dashboard.php');
 if ($res == "1" && $level == "1") {}else{header("location:../");}
+
+// Set page title
+$page_title = "Academic Terms";
+
+// Include the academic header
+include('academic-header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<head>
-<title>SRMS - Academic Terms</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<base href="../">
-<link rel="stylesheet" type="text/css" href="css/main.css">
-<link rel="icon" href="images/icon.ico">
-<link rel="stylesheet" type="text/css" href="cdn.jsdelivr.net/npm/bootstrap-icons%401.10.5/font/bootstrap-icons.css">
-<link rel="stylesheet" href="cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css">
-<link type="text/css" rel="stylesheet" href="loader/waitMe.css">
-</head>
-<body class="app sidebar-mini">
 
-<header class="app-header"><a class="app-header__logo" href="javascript:void(0);">SRMS</a>
-<a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
-
-<ul class="app-nav">
-
-<li class="dropdown"><a class="app-nav__item" href="#" data-bs-toggle="dropdown" aria-label="Open Profile Menu"><i class="bi bi-person fs-4"></i></a>
-<ul class="dropdown-menu settings-menu dropdown-menu-right">
-<li><a class="dropdown-item" href="academic/profile"><i class="bi bi-person me-2 fs-5"></i> Profile</a></li>
-<li><a class="dropdown-item" href="logout"><i class="bi bi-box-arrow-right me-2 fs-5"></i> Logout</a></li>
-</ul>
-</li>
-</ul>
-</header>
-
-<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-<aside class="app-sidebar">
-<div class="app-sidebar__user">
-<div>
-<p class="app-sidebar__user-name"><?php echo $fname.' '.$lname; ?></p>
-<p class="app-sidebar__user-designation">Academic</p>
-</div>
-</div>
-<ul class="app-menu">
-<li><a class="app-menu__item" href="academic"><i class="app-menu__icon feather icon-monitor"></i><span class="app-menu__label">Dashboard</span></a></li>
-<li><a class="app-menu__item active" href="academic/terms"><i class="app-menu__icon feather icon-folder"></i><span class="app-menu__label">Academic Terms</span></a></li>
-
-<li><a class="app-menu__item" href="academic/classes"><i class="app-menu__icon feather icon-home"></i><span class="app-menu__label">Classes</span></a></li>
-<li><a class="app-menu__item" href="academic/subjects"><i class="app-menu__icon feather icon-book"></i><span class="app-menu__label">Subjects</span></a></li>
-<li><a class="app-menu__item" href="academic/combinations"><i class="app-menu__icon feather icon-book-open"></i><span class="app-menu__label">Subject Combinations</span></a></li>
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-users"></i><span class="app-menu__label">Students</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-<li><a class="treeview-item" href="academic/promote_students"><i class="icon bi bi-circle-fill"></i> Promote Students</a></li>
-</ul>
-</li>
-
-<li class="treeview"><a class="app-menu__item" href="javascript:void(0);" data-toggle="treeview"><i class="app-menu__icon feather icon-file-text"></i><span class="app-menu__label">Examination Results</span><i class="treeview-indicator bi bi-chevron-right"></i></a>
-<ul class="treeview-menu">
-
-<li><a class="treeview-item" href="academic/manage_results"><i class="icon bi bi-circle-fill"></i> Manage Results</a></li>
-<li><a class="treeview-item" href="academic/individual_results"><i class="icon bi bi-circle-fill"></i> Individual Results</a></li>
-</ul>
-</li>
-<li><a class="app-menu__item" href="academic/report"><i class="app-menu__icon feather icon-bar-chart-2"></i><span class="app-menu__label">Report Tool</span></a></li>
-<li><a class="app-menu__item" href="academic/grading-system"><i class="app-menu__icon feather icon-award"></i><span class="app-menu__label">Grading System</span></a></li>
-<li><a class="app-menu__item" href="academic/announcement"><i class="app-menu__icon feather icon-bell"></i><span class="app-menu__label">Announcements</span></a></li>
-</ul>
-</aside>
-<main class="app-content">
 <div class="app-title">
-<div>
-<h1>Academic Terms</h1>
-</div>
-<ul class="app-breadcrumb breadcrumb">
-<li class="breadcrumb-item"><button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addModal">Add</button></li>
-</ul>
-</div>
-
-<div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title" id="addModalLabel">Add Academic Term</h5>
-</div>
-<div class="modal-body">
-<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/new_term">
-<div class="mb-2">
-<label class="form-label">Academic Term</label>
-<input required name="name" class="form-control" type="text" placeholder="Enter Academic Term">
-</div>
-<div class="mb-3">
-<label class="form-label">Status</label>
-<select class="form-control" name="status" required>
-<option selected disabled value="">Select status</option>
-<option value="1">Active</option>
-<option value="0">Inactive</option>
-</select>
+    <div>
+        <h1><i class="bi bi-calendar-event me-2"></i>Academic Terms</h1>
+        <p>Manage academic terms and semesters</p>
+    </div>
+    <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item">
+            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="bi bi-plus-circle me-1"></i>Add Term
+            </button>
+        </li>
+    </ul>
 </div>
 
-<button type="submit" name="submit" value="1" class="btn btn-primary app_btn">Add</button>
-<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-</form>
+<div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">
+                    <i class="bi bi-plus-circle me-2"></i>Add Academic Term
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/new_term.php">
+                    <div class="mb-3">
+                        <label class="form-label">Academic Term</label>
+                        <input required name="name" class="form-control" type="text" placeholder="Enter Academic Term">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" name="status" required>
+                            <option selected disabled value="">Select status</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer px-0 pb-0">
+                        <button type="submit" name="submit" value="1" class="btn btn-primary app_btn">
+                            <i class="bi bi-check-circle me-1"></i>Add
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-</div>
-</div>
-</div>
-
-<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title" id="editModalLabel">Edit Academic Term</h5>
-</div>
-<div class="modal-body">
-<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/update_term">
-<div class="mb-2">
-<label class="form-label">Academic Term</label>
-<input id="term" required name="name" class="form-control" type="text" placeholder="Enter Academic Term">
-</div>
-<div class="mb-3">
-<label class="form-label">Status</label>
-<select id="status" class="form-control" name="status" required>
-<option selected disabled value="">Select status</option>
-<option value="1">Active</option>
-<option value="0">Inactive</option>
-</select>
-</div>
-<input type="hidden" name="id" id="id">
-<button type="submit" name="submit" value="1" class="btn btn-primary app_btn">Save</button>
-<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-</form>
-</div>
-
-</div>
-</div>
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Academic Term
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/update_term.php">
+                    <div class="mb-3">
+                        <label class="form-label">Academic Term</label>
+                        <input id="term" required name="name" class="form-control" type="text"
+                            placeholder="Enter Academic Term">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select id="status" class="form-control" name="status" required>
+                            <option selected disabled value="">Select status</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="id" id="id">
+                    <div class="modal-footer px-0 pb-0">
+                        <button type="submit" name="submit" value="1" class="btn btn-primary app_btn">
+                            <i class="bi bi-check-circle me-1"></i>Save
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>Close
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
-<div class="col-md-12">
-<div class="tile">
-<div class="tile-body">
-<div class="table-responsive">
-<h3 class="tile-title">Academic Terms</h3>
-<table class="table table-hover table-bordered" id="srmsTable">
-<thead>
-<tr>
-<th>Name</th>
-<th width="120" align="center">Status</th>
-<th width="120" align="center"></th>
-</tr>
-</thead>
-<tbody>
-<?php
+    <div class="col-md-12">
+        <div class="dashboard-widget">
+            <div class="widget-header simple-header">
+                <h5><i class="bi bi-calendar-event me-2"></i>Academic Terms</h5>
+            </div>
+            <div class="widget-content">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="srmsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th width="120" align="center">Status</th>
+                                <th width="150" align="center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            try {
+                                // Use the shared connection from config instead of creating a new one
+                                $stmt = $conn->prepare("SELECT * FROM tbl_terms");
+                                $stmt->execute();
+                                $result = $stmt->fetchAll();
 
-try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                foreach($result as $row)
+                                {
+                            ?>
+                            <textarea style="display:none;" id="term_<?php echo $row[0]; ?>"><?php echo $row[1]; ?></textarea>
+                            <tr>
+                                <td><?php echo $row[1]; ?></td>
+                                <td align="center">
+                                    <?php if ($row[2] == "1") { 
+                                        print '<span class="badge bg-success">ACTIVE</span>'; 
+                                    } else { 
+                                        print '<span class="badge bg-danger">INACTIVE</span>'; 
+                                    } ?>
+                                </td>
+                                <td align="center">
+                                    <button onclick="set_term('<?php echo $row[0]; ?>', '<?php echo $row[2]; ?>');" 
+                                            class="btn btn-primary btn-sm" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editModal">
+                                        <i class="bi bi-pencil-square me-1"></i>Edit
+                                    </button>
+                                    <button onclick="del('academic/core/drop_term.php?id=<?php echo $row[0]; ?>', 'Delete Academic Term?');" 
+                                            class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php
+                                }
+                            } catch(PDOException $e) {
+                                echo "Connection failed: " . $e->getMessage();
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-$stmt = $conn->prepare("SELECT * FROM tbl_terms");
-$stmt->execute();
-$result = $stmt->fetchAll();
-
-foreach($result as $row)
-{
-?>
-<textarea style="display:none;" id="term_<?php echo $row[0]; ?>"><?php echo $row[1]; ?></textarea>
-<tr>
-<td><?php echo $row[1]; ?></td>
-<td align="center"><?php if ($row[2] == "1") { print '<span class="me-1 badge badge-pill bg-success">ACTIVE</span>'; }else{ print '<span class="me-1 badge badge-pill bg-danger">INACTIVE</span>'; } ?></td>
-<td align="center">
-<a onclick="set_term('<?php echo $row[0]; ?>', '<?php echo $row[2]; ?>');" class="btn btn-primary btn-sm" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
-<a onclick="del('academic/core/drop_term?id=<?php echo $row[0]; ?>', 'Delete Academic Term?');" class="btn btn-danger btn-sm" href="javascript:void(0);">Delete</a>
-</td>
-</tr>
-<?php
+<style>
+/* Remove gradient styling and use solid colors */
+.btn-primary {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
 }
 
-}catch(PDOException $e)
-{
-echo "Connection failed: " . $e->getMessage();
+.btn-primary:hover {
+    background-color: #0056b3 !important;
+    border-color: #0056b3 !important;
 }
 
-?>
+.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
 
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
+.btn-secondary:hover {
+    background-color: #545b62 !important;
+    border-color: #545b62 !important;
+}
 
-</main>
+.btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
 
-<script src="js/jquery-3.7.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
-<script src="loader/waitMe.js"></script>
-<script src="js/sweetalert2@11.js"></script>
-<script src="js/forms.js"></script>
-<script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.html"></script>
-<script type="text/javascript">$('#srmsTable').DataTable({"sort" : false});</script>
-<?php require_once('const/check-reply.php'); ?>
-</body>
+.btn-danger:hover {
+    background-color: #c82333 !important;
+    border-color: #c82333 !important;
+}
 
-</html>
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Remove any gradient backgrounds */
+.dashboard-widget {
+    background: #ffffff !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.widget-header {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+.simple-header {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+.simple-header h5 {
+    color: #495057 !important;
+    font-weight: 600;
+}
+</style>
+
+<script>
+function set_term(id, status) {
+    document.getElementById('id').value = id;
+    document.getElementById('term').value = document.getElementById('term_' + id).value;
+    document.getElementById('status').value = status;
+}
+</script>
+
+<?php include('academic-footer.php'); ?>

@@ -1,0 +1,19 @@
+/* Override green colors from main.css */
+@media (min-width: 768px) {
+  .app-header__logo {
+    background-color: #007bff !important;
+  }
+}
+
+.app-sidebar__toggle:focus, .app-sidebar__toggle:hover {
+  background-color: #0056b3 !important;
+}
+
+/* Additional logo styling to ensure no green colors */
+.app-header__logo {
+  background-color: transparent !important;
+}
+
+.app-header__logo:hover {
+  background-color: rgba(0, 123, 255, 0.1) !important;
+} 

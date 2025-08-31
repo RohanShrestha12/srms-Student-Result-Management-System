@@ -1,0 +1,602 @@
+/* Teacher Academic Layout Styling */
+/* This file applies academic layout patterns to teacher pages */
+
+/* Main content area - matches academic layout */
+.app-content {
+  min-height: calc(100vh - 50px);
+  margin-top: 50px;
+  padding: 30px;
+  background-color: #E5E5E5;
+  -webkit-transition: margin-left 0.3s ease;
+  transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .app-content {
+    margin-left: 230px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-content {
+    margin-top: 50px;
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-content {
+    padding: 15px;
+  }
+}
+
+@media print {
+  .app-content {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+  }
+}
+
+/* App title styling - matches academic */
+.app-title {
+  margin-bottom: 30px;
+}
+
+.app-title h1, .app-title .h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.app-title p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .app-title h1, .app-title .h1 {
+    font-size: 1.5rem;
+  }
+  
+  .app-title p {
+    font-size: 0.875rem;
+  }
+}
+
+/* Breadcrumb styling */
+.app-breadcrumb {
+  margin-bottom: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+@media (max-width: 480px) {
+  .app-breadcrumb {
+    margin-top: 10px;
+  }
+}
+
+/* Tile styling - matches academic layout */
+.tile {
+  position: relative;
+  background: #ffffff;
+  border-radius: 3px;
+  padding: 20px;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+@media print {
+  .tile {
+    border: 1px solid #ddd;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+  }
+}
+
+.tile.small {
+  padding: 0;
+}
+
+.tile .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  color: #555;
+  border-radius: 3px;
+}
+
+.tile .overlay .l-text {
+  font-size: 24px;
+  margin-top: 15px;
+  margin-left: 12px;
+}
+
+.tile .tile-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.tile .tile-title-w-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-bottom: 20px;
+}
+
+.tile .tile-title-w-btn p {
+  margin: 0;
+}
+
+.tile .tile-title-w-btn .title {
+  margin: 0;
+}
+
+.tile .tile-title-w-btn .side {
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.tile .tile-title-w-btn .btn-group {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+}
+
+.tile .tile-footer {
+  border-top: 1px solid #ddd;
+  padding: 20px 0 0 0;
+  margin-top: 10px;
+}
+
+/* Form styling - matches academic */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #00695C;
+  box-shadow: 0 0 0 0.2rem rgba(0, 105, 92, 0.25);
+}
+
+/* Button styling - matches academic */
+.btn {
+  border-radius: 3px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+  background-color: #00695C;
+  border-color: #00695C;
+}
+
+.btn-primary:hover {
+  background-color: #00544a;
+  border-color: #00544a;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.btn-success {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #bb2d3b;
+  border-color: #b02a37;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-warning:hover {
+  background-color: #ffca2c;
+  border-color: #ffc720;
+}
+
+.btn-info {
+  background-color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+.btn-info:hover {
+  background-color: #31d2f2;
+  border-color: #25cff2;
+}
+
+/* Alert styling - matches academic */
+.alert {
+  border-radius: 3px;
+  border: none;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.alert:last-child {
+  margin-bottom: 0;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Card styling - matches academic */
+.card {
+  border: 1px solid #e9ecef;
+  border-radius: 3px;
+  background: #f8f9fa;
+  margin-bottom: 1rem;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-body h6 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.card-body code {
+  background: #fff;
+  padding: 0.75rem;
+  border-radius: 3px;
+  display: block;
+  font-size: 0.875rem;
+  color: #495057;
+  border: 1px solid #e9ecef;
+}
+
+/* Table styling - matches academic */
+.table {
+  margin-bottom: 1rem;
+  color: #212529;
+  vertical-align: top;
+  border-color: #dee2e6;
+}
+
+.table > :not(caption) > * > * {
+  padding: 0.75rem;
+  border-bottom-width: 1px;
+}
+
+.table > thead {
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table-bordered > :not(caption) > * {
+  border-width: 1px 0;
+}
+
+.table-bordered > :not(caption) > * > * {
+  border-width: 0 1px;
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+/* Select2 styling - matches academic */
+.select2-container--default .select2-selection--single {
+  border: 1px solid #ddd !important;
+  border-radius: 3px !important;
+  padding: 0.75rem !important;
+  height: auto !important;
+}
+
+.select2-container--default .select2-selection--single:focus {
+  border-color: #00695C !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 105, 92, 0.25) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 1.5;
+  padding-left: 0;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100%;
+  top: 0;
+  right: 8px;
+}
+
+/* Modal styling - matches academic */
+.modal-content {
+  border-radius: 3px;
+  border: none;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+}
+
+/* File upload styling - matches academic */
+.file-upload-wrapper {
+  border: 2px dashed #00695C;
+  border-radius: 3px;
+  padding: 2rem;
+  text-align: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.file-upload-wrapper:hover {
+  border-color: #00544a;
+  background: #e9ecef;
+}
+
+.file-upload-wrapper input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+}
+
+.upload-content i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.upload-content h5 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.upload-content p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.upload-hint {
+  margin-top: 1rem;
+}
+
+/* Responsive design - matches academic */
+@media (max-width: 768px) {
+  .app-content {
+    padding: 1rem;
+  }
+  
+  .tile {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .tile-title-w-btn,
+  .tile-body,
+  .tile-footer {
+    padding: 15px;
+  }
+  
+  .tile-footer .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-header,
+  .modal-footer {
+    padding: 1rem;
+  }
+}
+
+/* Animation - matches academic */
+.tile {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Row and column spacing - matches academic */
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.row > * {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Widget styling - matches academic */
+.widget-small {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
+.widget-small .icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.widget-small.primary .icon {
+  background-color: #00695C;
+}
+
+.widget-small.info .icon {
+  background-color: #0dcaf0;
+}
+
+.widget-small.warning .icon {
+  background-color: #ffc107;
+}
+
+.widget-small.danger .icon {
+  background-color: #dc3545;
+}
+
+.widget-small .info {
+  flex: 1;
+}
+
+.widget-small .info h4 {
+  margin: 0 0 5px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.widget-small .info p {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00695C;
+}
+
+/* Utility classes - matches academic */
+.text-primary {
+  color: #00695C !important;
+}
+
+.bg-primary {
+  background-color: #00695C !important;
+}
+
+.border-primary {
+  border-color: #00695C !important;
+}
+
+/* Print styles - matches academic */
+@media print {
+  .app-content {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+  }
+  
+  .tile {
+    border: 1px solid #ddd;
+    box-shadow: none;
+    margin-bottom: 20px;
+  }
+  
+  .btn {
+    display: none;
+  }
+} 

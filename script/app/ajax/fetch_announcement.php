@@ -2,15 +2,13 @@
 session_start();
 chdir('../../');
 require_once('db/config.php');
+require_once('db/connection.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $id = $_POST['id'];
 
 try {
-$conn = new PDO('mysql:host='.DBHost.';dbname='.DBName.';charset='.DBCharset.';collation='.DBCollation.';prefix='.DBPrefix.'', DBUser, DBPass);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 $stmt = $conn->prepare("SELECT * FROM tbl_announcements WHERE id = ?");
 $stmt->execute([$id]);
 $result = $stmt->fetchAll();
@@ -19,7 +17,7 @@ foreach($result as $row)
 {
 ?>
 
-<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/update_announcement">
+<form class="app_frm" method="POST" autocomplete="OFF" action="academic/core/update_announcement.php">
 <div class="mb-2">
 <label class="form-label">Enter Title</label>
 <input required value="<?php echo $row[1]; ?>" type="text" name="title" class="form-control txt-cap" placeholder="Enter Announcement Title">

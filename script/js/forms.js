@@ -147,14 +147,18 @@ onClose: function() {}
 });
 }
 
+// Clear existing options from both possible select elements
 $('#sub_imp').find('option').remove();
+$('#sub_view').find('option').remove();
 
 $.ajax({
 type: 'POST',
 url: 'app/ajax/fetch_subjects.php',
 data: 'id=' + class_id + '&submit=1',
 success: function (data) {
-$('#sub_imp').append(data)
+// Append to both possible select elements
+$('#sub_imp').append(data);
+$('#sub_view').append(data);
 $('.app_frm').waitMe('hide');
 }
 });

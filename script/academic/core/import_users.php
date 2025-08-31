@@ -51,7 +51,7 @@ $st_rec++;
 
 
 $_SESSION['reply'] = array (array("success",'Data import completed'));
-header("location:../teachers");
+header("location:../teachers.php");
 
 } else {
 echo SimpleXLSX::parseError();

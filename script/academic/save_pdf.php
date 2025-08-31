@@ -1,4 +1,7 @@
 <?php
+// Start output buffering immediately to prevent any output
+ob_start();
+
 chdir('../');
 session_start();
 require_once('db/config.php');
@@ -7,14 +10,18 @@ require_once('const/check_session.php');
 require_once('tcpdf/tcpdf.php');
 require_once('const/calculations.php');
 
-if ($res == "1" && $level == "1" && isset($_GET['term'])) {} else { header("location:../"); }
+if ($res == "1" && $level == "1" && isset($_GET['term'])) {} else { 
+    ob_end_clean();
+    header("location:../"); 
+    exit();
+}
 
 $term = $_GET['term'];
 $std = $_GET['std'];
 
 try {
-    $conn = new PDO('mysql:host=' . DBHost . ';dbname=' . DBName . ';charset=' . DBCharset, DBUser, DBPass);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // $conn is already available from school.php
+    // No need to create a new connection
 
     $stmt = $conn->prepare("SELECT * FROM tbl_students WHERE id = ?");
     $stmt->execute([$std]);
@@ -41,7 +48,9 @@ try {
     $result2 = $stmt->fetchAll();
 
     if (count($result2) < 1) {
+        ob_end_clean();
         header("location:./");
+        exit();
     }
 } catch (PDOException $e) {
     ob_end_clean();
@@ -57,8 +66,6 @@ $pdf->setFontSubsetting(true);
 $pdf->SetFont('helvetica', '', 11, '', true);
 
 $pdf->AddPage();
-
-ob_start();
 
 // Registration No.
 $html = '<div style="text-align:right; font-family:calibri; font-size:11px; font-weight:bold; width:170.43mm; padding-right:50px; margin-bottom:6px;">
@@ -171,5 +178,9 @@ $html = '<p style="text-align:center; font-size:10px;">NOTE: ONE CREDIT HOUR EQU
 
 $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, 'C', true);
 
+// Clean any remaining output buffer content
 ob_end_clean();
+
+// Output the PDF
 $pdf->Output($title . '.pdf', 'I');
+exit();
